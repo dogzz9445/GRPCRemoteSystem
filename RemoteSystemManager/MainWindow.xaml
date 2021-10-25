@@ -7,6 +7,14 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
+        <Border BorderBrush="#484848"
+                BorderThickness="1"
+                VerticalAlignment="Stretch"
+                HorizontalAlignment="Stretch">
+            <TextBlock Height="300"
+                       Width="800"
+                       x:Name="TextBlockLog"/>
 
+        </Border>
     </Grid>
 </Window>
