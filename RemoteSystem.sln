@@ -3,11 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31702.278
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemoteSystemClient", "RemoteSystemClient\RemoteSystemClient.csproj", "{79B7ED19-1C4E-40A2-9D70-DC8E22C91A9C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RemoteSystemClient", "RemoteSystemClient\RemoteSystemClient.csproj", "{79B7ED19-1C4E-40A2-9D70-DC8E22C91A9C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3C703B6B-4742-428B-8D83-0A31F5FBB1EE} = {3C703B6B-4742-428B-8D83-0A31F5FBB1EE}
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemoteSystemManager", "RemoteSystemManager\RemoteSystemManager.csproj", "{83672A0F-170B-44FE-9843-29E5B3DF22B1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RemoteSystemManager", "RemoteSystemManager\RemoteSystemManager.csproj", "{83672A0F-170B-44FE-9843-29E5B3DF22B1}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3C703B6B-4742-428B-8D83-0A31F5FBB1EE} = {3C703B6B-4742-428B-8D83-0A31F5FBB1EE}
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemoteSystemProtobuf", "RemoteSystemProtobuf\RemoteSystemProtobuf.csproj", "{3C703B6B-4742-428B-8D83-0A31F5FBB1EE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RemoteSystemProtobuf", "RemoteSystemProtobuf\RemoteSystemProtobuf.csproj", "{3C703B6B-4742-428B-8D83-0A31F5FBB1EE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

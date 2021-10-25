@@ -12,6 +12,11 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Grpc.Core;
+using Grpc.Net.Client;
+using RemoteSystem.Protobuf;
+using RemoteSystem.Remote;
+using RemoteSystemClient.Services;
 
 namespace RemoteSystemClient
 {
@@ -23,6 +28,12 @@ namespace RemoteSystemClient
         public MainWindow()
         {
             InitializeComponent();
+
+            var channelOptions = new GrpcChannelOptions();
+            var channel = GrpcChannel.ForAddress("127.0.0.1:5001");
+            var remoteService = new RemoteService();
+            
+            remoteService.
         }
     }
 }

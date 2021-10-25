@@ -15,4 +15,9 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <Protobuf Include="Remote.proto" GrpcServices="Both" />
+    <Protobuf Include="test.proto" GrpcServices="Both" />
+  </ItemGroup>
+
 </Project>
