@@ -8,12 +8,26 @@ option csharp_namespace = "RemoteSystem.Remote";
 service Remote
 {
 	rpc GetHeartBeat (google.protobuf.Empty) returns (HeartBeat);
+	rpc GetPerformance (google.protobuf.Empty) returns (Performance);
 }
 
 message HeartBeat
 {
 	string Timestamp = 1;
 	string Message = 2;
+}
+
+message Performance
+{
+	float CpuUsage = 1;
+	float MemoryUsage = 2;
+	float NetworkUsage = 3;
+	float GpuUsage = 4;
+}
+
+message Program
+{
+	string program_name = 1;
 }
 
 //message Person 
