@@ -15,12 +15,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Protobuf Include="..\RemoteSystemProtobuf\Remote.proto" GrpcServices="Both">
-      <Link>Protos\Remote.proto</Link>
-    </Protobuf>
-  </ItemGroup>
-
-  <ItemGroup>
     <Reference Include="System.Diagnostics.PerformanceCounter">
       <HintPath>..\..\..\..\..\..\Program Files\dotnet\packs\Microsoft.WindowsDesktop.App.Ref\5.0.0\ref\net5.0\System.Diagnostics.PerformanceCounter.dll</HintPath>
     </Reference>

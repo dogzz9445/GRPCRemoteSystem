@@ -32,7 +32,6 @@ namespace RemoteSystemServer
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGrpcService<GreeterService>();
                 endpoints.MapGrpcService<RemoteService>();
 
                 endpoints.MapGet("/", async context =>
