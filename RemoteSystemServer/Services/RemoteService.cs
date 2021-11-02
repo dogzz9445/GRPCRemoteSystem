@@ -42,5 +42,46 @@ namespace RemoteSystemServer
             });
         }
 
+        public override Task<Empty> PostComputerControlMessage(ComputerControl request, ServerCallContext context)
+        {
+            if (request.Control == ComputerControl.Types.ComputerControlType.Start)
+            {
+
+            }
+            else if (request.Control == ComputerControl.Types.ComputerControlType.Restart)
+            {
+                Process.Start("shutdown.exe", "-r");
+            }
+            else if (request.Control == ComputerControl.Types.ComputerControlType.Stop)
+            {
+                Process.Start("shutdown.exe", "-s -f");
+            }
+            return Task.FromResult(new Empty());
+        }
+
+        public override Task<MessageResult> PostProgramControlMessage(ProgramControl request, ServerCallContext context)
+        {
+            if (request.Control == ProgramControl.Types.ProgramControlType.Start)
+            {
+                // TODO:
+                // 고치기
+                Process.Start(request.FileName);
+            }
+            else if (request.Control == ProgramControl.Types.ProgramControlType.Stop)
+            {
+                foreach (Process process in Process.GetProcesses())
+                {
+                    if (process.ProcessName.StartsWith(request.ProcessName))
+                    {
+                        process.Kill();
+                    }
+                }
+            }
+            return Task.FromResult(new MessageResult
+            {
+                Result = MessageResult.Types.MessageResultType.Success,
+                ResultMessage = "suc"
+            });
+        }
     }
 }

@@ -9,6 +9,41 @@ service Remote
 {
 	rpc GetHeartBeat (google.protobuf.Empty) returns (HeartBeat);
 	rpc GetPerformance (google.protobuf.Empty) returns (Performance);
+	rpc PostComputerControlMessage (ComputerControl) returns (google.protobuf.Empty);
+	rpc PostProgramControlMessage (ProgramControl) returns (MessageResult);
+}
+
+message MessageResult 
+{
+	enum MessageResultType {
+		SUCCESS = 0;
+		ERROR = 1;
+	}
+	MessageResultType result = 1;
+	string resultMessage = 2;
+}
+
+message ComputerControl
+{
+	enum ComputerControlType {
+		START = 0;
+		RESTART = 1;
+		STOP = 2;
+	}
+	ComputerControlType control = 1;
+}
+
+message ProgramControl
+{
+	string name = 1;
+	string fileName = 2;
+	string processName = 3;
+	
+	enum ProgramControlType {
+		START = 0;
+		STOP = 1;
+	}
+	ProgramControlType control = 4;
 }
 
 message HeartBeat
@@ -50,4 +85,58 @@ message Program
 //  repeated PhoneNumber phones = 4;
 
 //  google.protobuf.Timestamp last_updated = 5;
+//}
+
+
+//syntax = "proto3";
+
+//option csharp_namespace = "RemoteSystem.Remote";
+
+//package greet;
+
+// The greeting service definition.
+//service Greeter {
+  // Sends a greeting
+//  rpc SayHello (HelloRequest) returns (HelloReply);
+//}
+
+// The request message containing the user's name.
+//message HelloRequest {
+//  string name = 1;
+//}
+
+// The response message containing the greetings.
+//message HelloReply {
+//  string message = 1;
+//}
+
+//syntax = "proto3";
+
+//import "google/protobuf/empty.proto";
+//import "google/protobuf/timestamp.proto";
+
+//option csharp_namespace = "RemoteSystem.Protobuf";
+
+//message Person
+//{
+//  string name = 1;
+//int32 id = 2;  // Unique ID number for this person.
+//  string email = 3;
+
+//  enum PhoneType
+//{
+//    MOBILE = 0;
+//    HOME = 1;
+//    WORK = 2;
+//}
+
+//message PhoneNumber
+//{
+//    string number = 1;
+//    PhoneType type = 2;
+//}
+
+//repeated PhoneNumber phones = 4;
+
+//google.protobuf.Timestamp last_updated = 5;
 //}

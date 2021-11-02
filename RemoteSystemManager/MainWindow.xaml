@@ -4,17 +4,79 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RemoteSystemManager"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:tb="http://www.hardcodet.net/taskbar"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="13"
+        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="Auto"
+        FontFamily="{DynamicResource MaterialDesignFont}"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow"
+        Height="1000"
+        Width="1600">
+    <Window.CommandBindings>
+        <!--<CommandBinding Command="Copy"
+                        Executed="OnCopy" />-->
+    </Window.CommandBindings>
+    <Window.ContextMenu>
+        <ContextMenu Style="{StaticResource MaterialDesignContextMenu}">
+            <MenuItem Header="트레이"
+                      x:Name="MainMenuItemTray" />
+            <MenuItem Header="종료"
+                      x:Name="MainMenuItemClose" />
+        </ContextMenu>
+    </Window.ContextMenu>
     <Grid>
-        <Border BorderBrush="#484848"
-                BorderThickness="1"
-                VerticalAlignment="Stretch"
-                HorizontalAlignment="Stretch">
-            <TextBlock Height="300"
-                       Width="800"
-                       x:Name="TextBlockLog"/>
 
-        </Border>
+        <tb:TaskbarIcon x:Name="TrayTaskbarIcon"
+                        Visibility="Visible"
+                        ToolTip="Tray Example"
+                        MenuActivation="LeftOrRightClick">
+            <tb:TaskbarIcon.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="열기">
+                        <MenuItem.Icon>
+                            <materialDesign:PackIcon Kind="Cog" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <Separator />
+                    <MenuItem Header="종료">
+                        <MenuItem.Icon>
+                            <materialDesign:PackIcon Kind="CloseThick" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </ContextMenu>
+            </tb:TaskbarIcon.ContextMenu>
+        </tb:TaskbarIcon>
+        <TabControl Style="{StaticResource MaterialDesignNavigatilRailTabControl}">
+            <TabItem ToolTip="홈"
+                     Style="{StaticResource MaterialDesignNavigationRailTabItem}">
+                <TabItem.Header>
+                    <materialDesign:PackIcon Kind="Home"
+                                             Width="32"
+                                             Height="32" />
+                </TabItem.Header>
+                <Frame Source="/View/HomePage.xaml" />
+            </TabItem>
+            <TabItem ToolTip="컴퓨터 설정"
+                     Style="{StaticResource MaterialDesignNavigationRailTabItem}">
+                <TabItem.Header>
+                    <materialDesign:PackIcon Kind="MonitorEdit"
+                                             Width="32"
+                                             Height="32" />
+                </TabItem.Header>
+                <Frame Source="/View/ComputerSettingPage.xaml" />
+            </TabItem>
+            <TabItem ToolTip="실행파일 배포"
+                     Style="{StaticResource MaterialDesignNavigationRailTabItem}">
+                <TabItem.Header>
+                    <materialDesign:PackIcon Kind="CubeSend"
+                                             Width="32"
+                                             Height="32" />
+                </TabItem.Header>
+            </TabItem>
+        </TabControl>
     </Grid>
 </Window>

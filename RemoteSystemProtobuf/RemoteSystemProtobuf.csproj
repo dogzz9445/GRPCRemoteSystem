@@ -18,8 +18,6 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <Protobuf Include="greet.proto" GrpcServices="Server" />
     <Protobuf Include="Remote.proto" GrpcServices="Both" />
-    <Protobuf Include="test.proto" GrpcServices="Both" />
   </ItemGroup>
 </Project>
