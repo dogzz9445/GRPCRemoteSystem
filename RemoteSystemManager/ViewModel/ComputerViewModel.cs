@@ -20,7 +20,8 @@ namespace RemoteSystemManager.ViewModel
         private ComputerViewModel()
         {
             Computers = new ItemObservableCollection<Computer>();
-            _listManagedPrograms = new ItemObservableCollection<Program>();
+            ListManagedPrograms = new ItemObservableCollection<Program>();
+            ListManagedProgramNames = new ObservableCollection<string>();
 
             ReadViewModel(ComputersConfigFileName);
         }
@@ -38,7 +39,7 @@ namespace RemoteSystemManager.ViewModel
         }
         #endregion
 
-        private const string ComputersConfigFileName = "Data/computers.json";
+        private const string ComputersConfigFileName = "data/computers.json";
         private static Func<Action, Task> callOnUiThread = async (handler) =>
             await Application.Current.Dispatcher.InvokeAsync(handler);
 
@@ -47,6 +48,9 @@ namespace RemoteSystemManager.ViewModel
         private ObservableCollection<string> _listManagedProgramNames;
         private Computer _selectedViewComputer;
         private Computer _selectedEditingComputer;
+
+        private DelegateCommand _runProgramCommand;
+        private DelegateCommand _
 
         private DelegateCommand _saveComputersCommand;
         private DelegateCommand _readComputersCommand;
@@ -62,7 +66,7 @@ namespace RemoteSystemManager.ViewModel
         public ObservableCollection<string> ListManagedProgramNames
         {
             get => _listManagedProgramNames;
-            set => _listManagedProgramNames = value;
+            set => SetProperty(ref _listManagedProgramNames, value);
         }
 
         public Computer SelectedViewComputer { get => _selectedViewComputer; set => SetProperty(ref _selectedViewComputer, value); }
@@ -116,7 +120,6 @@ namespace RemoteSystemManager.ViewModel
                 model.IsSelected = select;
             }
         }
-        public List<String> GetAllProgramNames => GetEnumerableAllProgramNames().ToList();
 
         public DelegateCommand SaveComputersCommand 
         {
@@ -184,7 +187,8 @@ namespace RemoteSystemManager.ViewModel
                     {
                         computers.ForEach(Computers.Add);
                     }
-                    GetAllPrograms().ToList().ForEach(_listManagedPrograms.Add);
+                    GetAllPrograms().ToList().ForEach(ListManagedPrograms.Add);
+                    GetEnumerableAllProgramNames().ToList().ForEach(ListManagedProgramNames.Add);
                     IsAllSelectedComputers = false;
                     IsAllSelectedPrograms = false;
                 });

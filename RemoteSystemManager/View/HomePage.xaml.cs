@@ -32,7 +32,7 @@ namespace RemoteSystemManager.View
             this.DataContext = _computerViewModel;
             DataGridComputerManagement.ItemsSource = _computerViewModel.Computers;
             DataGridProgramManagement.ItemsSource = _computerViewModel.ListManagedPrograms;
-            ListViewProgramNames.ItemsSource = _computerViewModel.GetAllProgramNames;
+            ListViewProgramNames.ItemsSource = _computerViewModel.ListManagedProgramNames;
         }
 
         private void ListViewProgramNames_SelectionChanged(object sender, SelectionChangedEventArgs e)
