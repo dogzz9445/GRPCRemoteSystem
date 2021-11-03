@@ -1,10 +1,14 @@
 ﻿using RemoteSystemManager.Common;
 using RemoteSystemManager.Model;
+using ScenarioGeneratorApp.Common;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace RemoteSystemManager.ViewModel
 {
@@ -16,10 +20,9 @@ namespace RemoteSystemManager.ViewModel
         private ComputerViewModel()
         {
             Computers = new ItemObservableCollection<Computer>();
+            _listManagedPrograms = new ItemObservableCollection<Program>();
 
-            InitTest();
-
-            GetAllPrograms().ToList().ForEach(_listManagedPrograms.Add);
+            ReadViewModel(ComputersConfigFileName);
         }
 
         public static ComputerViewModel Instance
@@ -35,17 +38,37 @@ namespace RemoteSystemManager.ViewModel
         }
         #endregion
 
+        private const string ComputersConfigFileName = "Data/computers.json";
+        private static Func<Action, Task> callOnUiThread = async (handler) =>
+            await Application.Current.Dispatcher.InvokeAsync(handler);
+
         private ItemObservableCollection<Computer> _computers;
-        private ItemObservableCollection<Program> _listManagedPrograms = new ItemObservableCollection<Program>();
+        private ItemObservableCollection<Program> _listManagedPrograms;
+        private ObservableCollection<string> _listManagedProgramNames;
         private Computer _selectedViewComputer;
         private Computer _selectedEditingComputer;
 
-        public ItemObservableCollection<Computer> Computers { get => _computers; set => _computers = value; }
-        public ItemObservableCollection<Program> ListManagedPrograms { get => _listManagedPrograms; set => _listManagedPrograms = value; }
+        private DelegateCommand _saveComputersCommand;
+        private DelegateCommand _readComputersCommand;
+        private DelegateCommand _addComputerCommand;
+        private DelegateCommand _removeComputerCommand;
+        private DelegateCommand _addProgramCommand;
+        private DelegateCommand _removeProgramCommand;
+
+
+        public ItemObservableCollection<Computer> Computers { get => _computers; set => SetCollectionProperty(ref _computers, value); }
+        public ItemObservableCollection<Program> ListManagedPrograms { get => _listManagedPrograms; set => SetCollectionProperty(ref _listManagedPrograms, value); }
+
+        public ObservableCollection<string> ListManagedProgramNames
+        {
+            get => _listManagedProgramNames;
+            set => _listManagedProgramNames = value;
+        }
+
         public Computer SelectedViewComputer { get => _selectedViewComputer; set => SetProperty(ref _selectedViewComputer, value); }
         public Computer SelectedEditingComputer { get => _selectedEditingComputer; set => SetProperty(ref _selectedEditingComputer, value); }
 
-        public bool? IsAllSelectedComputers 
+        public bool? IsAllSelectedComputers
         {
             get
             {
@@ -93,7 +116,31 @@ namespace RemoteSystemManager.ViewModel
                 model.IsSelected = select;
             }
         }
-        public List<String> GetAllProgramNames { get => GetEnumerableAllProgramNames().ToList(); }
+        public List<String> GetAllProgramNames => GetEnumerableAllProgramNames().ToList();
+
+        public DelegateCommand SaveComputersCommand 
+        {
+            get
+            {
+                return _saveComputersCommand ?? (_saveComputersCommand = new DelegateCommand(
+                    async () =>
+                    {
+                        await SaveViewModel(ComputersConfigFileName);
+                    }));
+            } 
+        }
+
+        public DelegateCommand ReadComputersCommand
+        {
+            get
+            {
+                return _readComputersCommand ??= new DelegateCommand(
+                    () =>
+                    {
+                        ReadViewModel(ComputersConfigFileName);
+                    });
+            }
+        }
 
         public IEnumerable<Program> GetAllPrograms()
         {
@@ -124,40 +171,35 @@ namespace RemoteSystemManager.ViewModel
             }
         }
 
-
-        #region 테스트
-        private void InitTest()
+        #region 설정 저장 및 불러오기
+        private async void ReadViewModel(string fileName)
         {
-            Computer computer1 = new Computer()
+            if (File.Exists(fileName))
             {
-                ComputerIp = "127.0.0.1",
-                ComputerName = "1호기"
-            };
-            computer1.Programs.Add(new Program()
+                var computers = await JsonManager.ReadJsonFile<List<Computer>>(fileName);
+                await callOnUiThread(() =>
+                {
+                    Computers.Clear();
+                    if (computers != null)
+                    {
+                        computers.ForEach(Computers.Add);
+                    }
+                    GetAllPrograms().ToList().ForEach(_listManagedPrograms.Add);
+                    IsAllSelectedComputers = false;
+                    IsAllSelectedPrograms = false;
+                });
+            }
+        }
+
+        private async Task SaveViewModel(string fileName)
+        {
+            var directory = Path.GetDirectoryName(fileName);
+            Directory.CreateDirectory(directory);
+
+            if (Computers.Count > 0)
             {
-                ComputerName = computer1.ComputerName,
-                ProgramName = "계기판프로그램",
-                ProgramPath = @"C:\Users\dmjan\Downloads\test\SW-AD61800638E002-EXF-R0.exe"
-            });
-            Computer computer2 = new Computer()
-            {
-                ComputerIp = "127.0.0.2",
-                ComputerName = "2호기"
-            };
-            computer2.Programs.Add(new Program()
-            {
-                ComputerName = computer2.ComputerName,
-                ProgramName = "영상프로그램",
-                ProgramPath = @"C:\영상\프로그램.exe"
-            });
-            computer2.Programs.Add(new Program()
-            {
-                ComputerName = computer2.ComputerName,
-                ProgramName = "음성프로그램",
-                ProgramPath = @"C:\영상\프로그램.exe"
-            });
-            Computers.Add(computer1);
-            Computers.Add(computer2);
+                await JsonManager.WritJsonFile(fileName, Computers);
+            }
         }
         #endregion
     }

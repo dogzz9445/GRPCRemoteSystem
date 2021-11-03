@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -37,6 +38,20 @@ namespace RemoteSystemManager.Common
             return result;
         }
 
+        protected bool SetCollectionProperty<T>(ref T storage, T value, [CallerMemberName] string propertyName = null) where T : INotifyCollectionChanged
+        {
+            if (storage != null)
+            {
+                storage.CollectionChanged -= new NotifyCollectionChangedEventHandler(RaisePropertyChangedEvent);
+            }
+            bool result = SetProperty(ref storage, value);
+            if (storage != null)
+            {
+                storage.CollectionChanged += new NotifyCollectionChangedEventHandler(RaisePropertyChangedEvent);
+            }
+            return result;
+        }
+
         //protected bool SetObservableCollection<T>(ref T storage, T value, [CallerMemberName] string propertyName = null) where T : IColl
 
         protected void RaisePropertyChangedEvent([CallerMemberName] string? propertyName = null)
@@ -47,6 +62,18 @@ namespace RemoteSystemManager.Common
         protected void RaisePropertyChangedEvent(object sender, PropertyChangedEventArgs eventArgs)
         {
             PropertyChanged?.Invoke(sender, eventArgs);
+        }
+
+        private void RaisePropertyChangedEvent(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs("Add"));
+            }
+            if (e.OldItems != null)
+            {
+                PropertyChanged?.Invoke(sender, new PropertyChangedEventArgs("delete"));
+            }
         }
     }
 }

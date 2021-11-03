@@ -13,23 +13,19 @@
         TextOptions.TextRenderingMode="Auto"
         FontFamily="{DynamicResource MaterialDesignFont}"
         mc:Ignorable="d"
-        Title="MainWindow"
+        Title="RemoteControl"
+        ResizeMode="NoResize"
         Height="1000"
         Width="1600">
-    <Window.CommandBindings>
-        <!--<CommandBinding Command="Copy"
-                        Executed="OnCopy" />-->
-    </Window.CommandBindings>
-    <Window.ContextMenu>
+    <!--<Window.ContextMenu>
         <ContextMenu Style="{StaticResource MaterialDesignContextMenu}">
             <MenuItem Header="트레이"
                       x:Name="MainMenuItemTray" />
             <MenuItem Header="종료"
                       x:Name="MainMenuItemClose" />
         </ContextMenu>
-    </Window.ContextMenu>
+    </Window.ContextMenu>-->
     <Grid>
-
         <tb:TaskbarIcon x:Name="TrayTaskbarIcon"
                         Visibility="Visible"
                         ToolTip="Tray Example"
@@ -50,8 +46,10 @@
                 </ContextMenu>
             </tb:TaskbarIcon.ContextMenu>
         </tb:TaskbarIcon>
-        <TabControl Style="{StaticResource MaterialDesignNavigatilRailTabControl}">
+        <TabControl Style="{StaticResource MaterialDesignNavigatilRailTabControl}"
+                    SelectionChanged="MainTabControl_SelectionChanged">
             <TabItem ToolTip="홈"
+                     Tag="HomePage"
                      Style="{StaticResource MaterialDesignNavigationRailTabItem}">
                 <TabItem.Header>
                     <materialDesign:PackIcon Kind="Home"
@@ -61,6 +59,7 @@
                 <Frame Source="/View/HomePage.xaml" />
             </TabItem>
             <TabItem ToolTip="컴퓨터 설정"
+                     Tag="ComputerSettingPage"
                      Style="{StaticResource MaterialDesignNavigationRailTabItem}">
                 <TabItem.Header>
                     <materialDesign:PackIcon Kind="MonitorEdit"
@@ -70,6 +69,7 @@
                 <Frame Source="/View/ComputerSettingPage.xaml" />
             </TabItem>
             <TabItem ToolTip="실행파일 배포"
+                     Tag="DistributionPage"
                      Style="{StaticResource MaterialDesignNavigationRailTabItem}">
                 <TabItem.Header>
                     <materialDesign:PackIcon Kind="CubeSend"

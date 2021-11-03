@@ -1,4 +1,5 @@
-﻿using RemoteSystemManager.Common;
+﻿using Newtonsoft.Json;
+using RemoteSystemManager.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,12 +15,14 @@ namespace RemoteSystemManager.Model
         private string _computerIp;
         private ItemObservableCollection<Program> _programs;
 
+        [JsonIgnore]
         public bool IsSelected 
         { 
             get => _isSelected; 
             set => SetProperty(ref _isSelected, value); 
         }
 
+        [JsonProperty("ComputerName")]
         public string ComputerName
         {
             get => _computerName;
@@ -32,13 +35,15 @@ namespace RemoteSystemManager.Model
                 SetProperty(ref _computerName, value);
             }
         }
-        
+
+        [JsonProperty("ComputerIp")]
         public string ComputerIp
         {
             get => _computerIp;
             set => SetProperty(ref _computerIp, value);
         }
 
+        [JsonProperty("Programs")]
         public ItemObservableCollection<Program> Programs
         {
             get => _programs;
@@ -47,6 +52,12 @@ namespace RemoteSystemManager.Model
         public Computer()
         {
             _programs = new ItemObservableCollection<Program>();
+        }
+
+        public void AddProgram(Program program)
+        {
+            program.ComputerName = ComputerName;
+            _programs.Add(program);
         }
     }
 }

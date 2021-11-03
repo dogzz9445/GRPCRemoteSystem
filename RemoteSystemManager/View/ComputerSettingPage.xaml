@@ -12,11 +12,21 @@
       Title="ComputerSettingPage">
 
     <Page.Resources>
+        
+        <!-- 스타일 -->
+        <Style TargetType="Border"
+               x:Key="ContentPanel">
+            <Setter Property="Margin"
+                    Value="8" />
+            <Setter Property="Background"
+                    Value="#24888888" />
+        </Style>
 
+        <!-- 데이터 템플릿 -->
         <DataTemplate x:Key="ProgramEditListDataTemplate"
                       DataType="{x:Type model:Program}">
-            <materialDesign:Card Background="{DynamicResource PrimaryHueDarkBrush}"
-                                 Foreground="{DynamicResource PrimaryHueDarkForegroundBrush}">
+            <Border Style="{StaticResource MaterialDesignToolBarMainPanelBorderStyle}"
+                    Background="#24888888">
                 <StackPanel VerticalAlignment="Center">
                     <Grid VerticalAlignment="Center">
                         <Grid.ColumnDefinitions>
@@ -51,7 +61,7 @@
                                  Text="{Binding Path=ProgramPath}" />
                     </Grid>
                 </StackPanel>
-            </materialDesign:Card>
+            </Border>
         </DataTemplate>
 
     </Page.Resources>
@@ -59,32 +69,33 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="64" />
-            <RowDefinition Height="64" />
+            <RowDefinition Height="1" />
             <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
-        <TextBlock Grid.Row="0"
-                   Margin="16"
-                   FontWeight="SemiBold"
-                   Style="{StaticResource MaterialDesignHeadline5TextBlock}"
-                   Text="컴퓨터 및 프로그램 추가 편집 관리" />
-        <Grid Grid.Row="1"
-              Margin="8">
+        <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="0"
-                    Style="{StaticResource MaterialDesignRaisedDarkButton}"
-                    Width="{DynamicResource ButtonWidth}"
-                    Margin="8"
-                    Content="열기" />
+            <TextBlock Grid.Column="0"
+                       Margin="16"
+                       FontWeight="SemiBold"
+                       Style="{StaticResource MaterialDesignHeadline5TextBlock}"
+                       Text="컴퓨터 및 프로그램 추가 편집 관리" />
             <Button Grid.Column="1"
                     Style="{StaticResource MaterialDesignRaisedDarkButton}"
                     Width="{DynamicResource ButtonWidth}"
+                    Command="{Binding Path=SaveComputersCommand}"
+                    HorizontalAlignment="Right"
                     Margin="8"
-                    Content="저장" />
+                    Content="설정 저장"
+                    Cursor="Hand" />
         </Grid>
+        
+        <Border Grid.Row="1"
+                BorderBrush="#888888"
+                BorderThickness="1" />
+
         <Grid Grid.Row="2"
               Margin="8">
             <Grid.ColumnDefinitions>
@@ -93,34 +104,60 @@
                 <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
 
+            <Grid Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="64"/>
+                    <RowDefinition Height="1*"/>
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0"
+                      Margin="8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Button Grid.Column="0"
+                            Style="{StaticResource MaterialDesignRaisedDarkButton}"
+                            Width="{DynamicResource ButtonWidth}"
+                            Margin="8"
+                            Content="컴퓨터 추가" />
+                    <Button Grid.Column="1"
+                            Style="{StaticResource MaterialDesignRaisedDarkButton}"
+                            Width="{DynamicResource ButtonWidth}"
+                            Margin="8"
+                            Content="컴퓨터 삭제"
+                            Cursor="Hand" />
+                </Grid>
+                <DataGrid Grid.Row="1"
+                          x:Name="DataGridComputerManagement"
+                          Margin="8 0 8 0"
+                          VerticalScrollBarVisibility="Auto"
+                          AutoGenerateColumns="False"
+                          SelectionMode="Single"
+                          CanUserAddRows="False"
+                          CanUserDeleteRows="False"
+                          SelectedItem="{Binding Path=SelectedEditingComputer, Mode=TwoWay}"
+                          HeadersVisibility="All">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Binding="{Binding ComputerName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                            Header="컴퓨터 이름"
+                                            ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}"
+                                            EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
 
-            <DataGrid x:Name="DataGridComputerManagement"
-                      Margin="8 0 8 0"
-                      VerticalScrollBarVisibility="Auto"
-                      AutoGenerateColumns="False"
-                      SelectionMode="Single"
-                      SelectedItem="{Binding Path=SelectedEditingComputer, Mode=TwoWay}"
-                      HeadersVisibility="All">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Binding="{Binding ComputerName}"
-                                        Header="컴퓨터 이름"
-                                        ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}"
-                                        EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
-
-                    <DataGridTextColumn Header="컴퓨터 주소"
-                                        Width="*"
-                                        Binding="{Binding ComputerIp, Mode=TwoWay}"
-                                        ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}"
-                                        EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
-                    <!--<DataGridTemplateColumn Header="삭제">
+                        <DataGridTextColumn Header="컴퓨터 주소"
+                                            Width="*"
+                                            Binding="{Binding ComputerIp, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                            ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}"
+                                            EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
+                        <!--<DataGridTemplateColumn Header="삭제">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Button Style="{StaticResource MaterialDesignFlatAccentButton}" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>-->
-                </DataGrid.Columns>
-            </DataGrid>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
 
 
             <Border Grid.Column="1"
@@ -129,19 +166,40 @@
 
             <Grid Grid.Column="2">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="64"/>
+                    <RowDefinition Height="64" />
+                    <RowDefinition Height="64" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
-                <TextBlock Grid.Row="0"
+                <Grid Grid.Row="0"
+                      Margin="8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Button Grid.Column="0"
+                            Style="{StaticResource MaterialDesignRaisedDarkButton}"
+                            Width="{DynamicResource ButtonWidth}"
+                            Margin="8"
+                            Content="프로그램 추가" />
+                    <Button Grid.Column="1"
+                            Style="{StaticResource MaterialDesignRaisedDarkButton}"
+                            Width="{DynamicResource ButtonWidth}"
+                            Margin="8"
+                            Content="프로그램 삭제"
+                            Cursor="Hand" />
+                </Grid>
+                <TextBlock Grid.Row="1"
                            Margin="16"
                            FontWeight="SemiBold"
                            Style="{StaticResource MaterialDesignHeadline5TextBlock}"
                            Text="{Binding SelectedEditingComputer.ComputerName}" />
-                <ListView Grid.Row="1"
-                          ItemsSource="{Binding SelectedEditingComputer.Programs}"
-                          ItemTemplate="{DynamicResource ProgramEditListDataTemplate}">
-                    
-                </ListView>
+                <Border Grid.Row="2"
+                        Style="{DynamicResource ContentPanel}">
+
+                    <ListView ItemsSource="{Binding SelectedEditingComputer.Programs}"
+                              ItemTemplate="{DynamicResource ProgramEditListDataTemplate}">
+                    </ListView>
+                </Border>
             </Grid>
         </Grid>
     </Grid>

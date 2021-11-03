@@ -73,7 +73,7 @@ namespace RemoteSystemManager.Common
         private void OnItemPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             //OnPropertyChanged(e);
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+            //OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.));
         }
     }
 }

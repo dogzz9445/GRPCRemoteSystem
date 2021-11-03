@@ -37,6 +37,17 @@ namespace RemoteSystemManager.View
 
         private void ListViewProgramNames_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            // 모든 프로그램들 IsSelected 체크 해제
+            // SendMessage에 담을 프로그램 이름을 IsSelected로 체크하기 위함
+            var allProrams = _computerViewModel.GetAllPrograms().ToList();
+            foreach (var program in allProrams)
+            {
+                program.IsSelected = false;
+            }
+            // 프로그램들 전체 체크도 해제
+            _computerViewModel.IsAllSelectedPrograms = false;
+
+            // 필터링
             List<Program> filteredPrograms = new List<Program>();
             if ((sender as ListView).SelectedItem.ToString() == "전체")
             {

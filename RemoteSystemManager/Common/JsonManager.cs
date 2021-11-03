@@ -34,7 +34,7 @@ namespace RemoteSystemManager.Common
             {
                 using (var writer = new JsonTextWriter(file))
                 {
-                    string json = JsonConvert.SerializeObject(jsonObject);
+                    string json = JsonConvert.SerializeObject(jsonObject, Formatting.Indented);
                     await writer.WriteRawAsync(json);
                 }
             }

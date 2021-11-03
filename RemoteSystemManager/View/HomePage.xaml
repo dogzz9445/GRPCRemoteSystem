@@ -43,10 +43,48 @@
             </materialDesign:Card>
         </DataTemplate>
         
-        <DataTemplate x:Key="ProgramInComputerListDataTemplate"
+        <DataTemplate x:Key="ProgramViewListDataTemplate"
                       DataType="{x:Type model:Program}">
+            <Border Style="{StaticResource MaterialDesignToolBarMainPanelBorderStyle}"
+                    Background="#24888888">
+                <StackPanel VerticalAlignment="Center">
+                    <Grid VerticalAlignment="Center">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="120" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0"
+                                   Margin="8"
+                                   VerticalAlignment="Center"
+                                   FontWeight="SemiBold"
+                                   Style="{StaticResource MaterialDesignButtonTextBlock}"
+                                   Text="프로그램 이름" />
+                        <TextBlock Grid.Column="1"
+                                   Margin="8"
+                                   Style="{StaticResource MaterialDesignButtonTextBlock}"
+                                   Text="{Binding Path=ProgramName}" />
+                    </Grid>
+                    <Grid VerticalAlignment="Center">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="120" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0"
+                                   Margin="8"
+                                   VerticalAlignment="Center"
+                                   FontWeight="SemiBold"
+                                   Style="{StaticResource MaterialDesignButtonTextBlock}"
+                                   Text="프로세스 이름" />
+                        <TextBlock Grid.Column="1"
+                                   Margin="8"
+                                   Style="{StaticResource MaterialDesignButtonTextBlock}"
+                                   Text="{Binding Path=ProgramProcessName}" />
+                    </Grid>
+                </StackPanel>
+            </Border>
         </DataTemplate>
-        
+
+
     </Page.Resources>
     
     <!-- 스타일 -->
@@ -103,6 +141,20 @@
                                   Margin="8 0 8 0"
                                   x:Name="ListViewProgramNames"
                                   SelectionChanged="ListViewProgramNames_SelectionChanged">
+                            <ListView.ContextMenu>
+                                <ContextMenu Padding="0">
+                                    <MenuItem Header="프로그램 전체 시작">
+                                        <MenuItem.Icon>
+                                            <materialDesign:PackIcon Kind="PlayBoxMultiple" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Header="프로그램 전체 종료">
+                                        <MenuItem.Icon>
+                                            <materialDesign:PackIcon Kind="CloseOctagon" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                </ContextMenu>
+                            </ListView.ContextMenu>
 
                         </ListView>
                     </StackPanel>
@@ -146,6 +198,20 @@
                                 <common:BindingProxy x:Key="DataContextProxy"
                                                      Data="{Binding}" />
                             </DataGrid.Resources>
+                            <DataGrid.ContextMenu>
+                                <ContextMenu Padding="0">
+                                    <MenuItem Header="프로그램 시작">
+                                        <MenuItem.Icon>
+                                            <materialDesign:PackIcon Kind="PlayBoxMultiple" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Header="프로그램 종료">
+                                        <MenuItem.Icon>
+                                            <materialDesign:PackIcon Kind="CloseOctagon" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                </ContextMenu>
+                            </DataGrid.ContextMenu>
                             <DataGrid.Columns>
                                 <DataGridCheckBoxColumn Binding="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}"
                                                         ElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnStyle}"
@@ -223,12 +289,32 @@
                               HorizontalScrollBarVisibility="Disabled"
                               CanUserAddRows="False"
                               SelectionUnit="FullRow"
+                              SelectedItem="{Binding SelectedViewComputer}"
                               AutoGenerateColumns="False"
                               HeadersVisibility="All">
                         <DataGrid.Resources>
                             <common:BindingProxy x:Key="DataContextProxy"
                                                  Data="{Binding}"/>
                         </DataGrid.Resources>
+                        <DataGrid.ContextMenu>
+                            <ContextMenu Padding="0">
+                                <MenuItem Header="컴퓨터 시작">
+                                    <MenuItem.Icon>
+                                        <materialDesign:PackIcon Kind="PlayBoxMultiple" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="컴퓨터 재시작">
+                                    <MenuItem.Icon>
+                                        <materialDesign:PackIcon Kind="Restart" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="컴퓨터 종료">
+                                    <MenuItem.Icon>
+                                        <materialDesign:PackIcon Kind="CloseOctagon" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                            </ContextMenu>
+                        </DataGrid.ContextMenu>
                         <DataGrid.Columns>
                             <DataGridCheckBoxColumn Binding="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}"
                                                     ElementStyle="{StaticResource MaterialDesignDataGridCheckBoxColumnStyle}"
@@ -268,11 +354,24 @@
             <!--프로그램 관리-->
             <Border Grid.Column="4"
                     Style="{DynamicResource ContentPanel}">
-                <Grid Grid.Column="4">
-                    <ListView>
-
+                <Grid>
+                    <ListView ItemTemplate="{DynamicResource ProgramViewListDataTemplate}"
+                              ItemsSource="{Binding SelectedViewComputer.Programs}">
+                        <ListView.ContextMenu>
+                            <ContextMenu Padding="0">
+                                <MenuItem Header="프로그램 시작">
+                                    <MenuItem.Icon>
+                                        <materialDesign:PackIcon Kind="PlayBoxMultiple" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="프로그램 종료">
+                                    <MenuItem.Icon>
+                                        <materialDesign:PackIcon Kind="CloseOctagon" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                            </ContextMenu>
+                        </ListView.ContextMenu>
                     </ListView>
-
                 </Grid>
             </Border>
 

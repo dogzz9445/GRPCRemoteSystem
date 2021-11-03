@@ -1,4 +1,5 @@
-﻿using RemoteSystemManager.Common;
+﻿using Newtonsoft.Json;
+using RemoteSystemManager.Common;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -14,28 +15,35 @@ namespace RemoteSystemManager.Model
         private string _computerName;
         private string _programName;
         private string _programPath;
-
+        
+        [JsonIgnore]
         public bool IsSelected 
         { 
             get => _isSelected; 
             set => SetProperty(ref _isSelected, value); 
         }
 
+        [JsonProperty("ProgramName")]
         public string ProgramName
         { 
             get => _programName;
             set => SetProperty(ref _programName, value);
         }
+
+        [JsonProperty("ProgramPath")]
         public string ProgramPath
         {
             get => _programPath;
             set => SetProperty(ref _programPath, value);
         }
-
+        
+        [JsonIgnore]
         public string ProgramProcessName
         {
             get => Path.GetFileName(_programPath);
         }
+
+        [JsonProperty("ComputerName")]
         public string ComputerName 
         {
             get => _computerName; 

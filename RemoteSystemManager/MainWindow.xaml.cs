@@ -59,9 +59,9 @@ namespace RemoteSystemManager
                 // 응용프로그램 종료 버튼 클릭시 / 윈도우 비활성화
                 Closing += (s, e) => { e.Cancel = true; this.Hide(); };
                 // 메인 팝업 메뉴 트레이 클릭시 / 윈도우 비활성화
-                MainMenuItemTray.Click += (s, e) => this.Hide();
+                //MainMenuItemTray.Click += (s, e) => this.Hide();
                 // 메인 팝업 메뉴 종료 클릭시 / 응용프로그램 종료
-                MainMenuItemClose.Click += (s, e) => System.Windows.Application.Current.Shutdown();
+                //MainMenuItemClose.Click += (s, e) => System.Windows.Application.Current.Shutdown();
                 // 아이콘 더블클릭시 / 윈도우 활성화
                 TrayTaskbarIcon.TrayMouseDoubleClick += (s, e) => this.Show();
                 // 태스크바 아이콘 설정버튼 클릭시 / 윈도우 활성화
@@ -71,6 +71,11 @@ namespace RemoteSystemManager
 
                 //TextBlockLog.Text = heartBeat.Timestamp + " " + heartBeat.Message;
             };
+        }
+
+        private void MainTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
         }
     }
 }

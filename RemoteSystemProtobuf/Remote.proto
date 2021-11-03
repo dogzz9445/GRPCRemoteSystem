@@ -60,10 +60,10 @@ message Performance
 	float GpuUsage = 4;
 }
 
-message Program
-{
-	string program_name = 1;
-}
+//message Program
+//{
+//	string program_name = 1;
+//}
 
 //message Person 
 //{
