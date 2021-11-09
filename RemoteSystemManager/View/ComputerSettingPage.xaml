@@ -41,6 +41,7 @@
                                    Text="프로그램 이름" />
                         <TextBox Grid.Column="1"
                                  Margin="8"
+                                 MinWidth="200"
                                  Style="{StaticResource MaterialDesignTextBox}"
                                  Text="{Binding Path=ProgramName}" />
                     </Grid>
@@ -57,6 +58,7 @@
                                    Text="프로그램 주소" />
                         <TextBox Grid.Column="1"
                                  Margin="8"
+                                 MinWidth="200"
                                  Style="{StaticResource MaterialDesignTextBox}"
                                  Text="{Binding Path=ProgramPath}" />
                     </Grid>
@@ -118,11 +120,13 @@
                     <Button Grid.Column="0"
                             Style="{StaticResource MaterialDesignRaisedDarkButton}"
                             Width="{DynamicResource ButtonWidth}"
+                            Command="{Binding AddComputerCommand}"
                             Margin="8"
                             Content="컴퓨터 추가" />
                     <Button Grid.Column="1"
                             Style="{StaticResource MaterialDesignRaisedDarkButton}"
                             Width="{DynamicResource ButtonWidth}"
+                            Command="{Binding RemoveComputerCommand}"
                             Margin="8"
                             Content="컴퓨터 삭제"
                             Cursor="Hand" />
@@ -179,11 +183,13 @@
                     <Button Grid.Column="0"
                             Style="{StaticResource MaterialDesignRaisedDarkButton}"
                             Width="{DynamicResource ButtonWidth}"
+                            Command="{Binding AddProgramCommand}"
                             Margin="8"
                             Content="프로그램 추가" />
                     <Button Grid.Column="1"
                             Style="{StaticResource MaterialDesignRaisedDarkButton}"
                             Width="{DynamicResource ButtonWidth}"
+                            Command="{Binding RemoveProgramCommand}"
                             Margin="8"
                             Content="프로그램 삭제"
                             Cursor="Hand" />
@@ -197,7 +203,8 @@
                         Style="{DynamicResource ContentPanel}">
 
                     <ListView ItemsSource="{Binding SelectedEditingComputer.Programs}"
-                              ItemTemplate="{DynamicResource ProgramEditListDataTemplate}">
+                              ItemTemplate="{DynamicResource ProgramEditListDataTemplate}"
+                              SelectedItem="{Binding SelectedEditingProgram, Mode=TwoWay}">
                     </ListView>
                 </Border>
             </Grid>

@@ -137,25 +137,26 @@
                                     Margin="8"
                                     Content="모든 프로그램 전체 종료" />
                         </Grid>
-                        <ListView Grid.Row="0"
-                                  Margin="8 0 8 0"
+                        <ListView Margin="8 0"
                                   x:Name="ListViewProgramNames"
-                                  SelectionChanged="ListViewProgramNames_SelectionChanged">
+                                  SelectionChanged="ListViewProgramNames_SelectionChanged"
+                                  SelectedItem="{Binding SelectedViewProgramName, Mode=TwoWay}">
                             <ListView.ContextMenu>
                                 <ContextMenu Padding="0">
-                                    <MenuItem Header="프로그램 전체 시작">
+                                    <MenuItem Header="프로그램 전체 시작"
+                                              Command="{Binding RunAllSelectedProgramsCommand}">
                                         <MenuItem.Icon>
                                             <materialDesign:PackIcon Kind="PlayBoxMultiple" />
                                         </MenuItem.Icon>
                                     </MenuItem>
-                                    <MenuItem Header="프로그램 전체 종료">
+                                    <MenuItem Header="프로그램 전체 종료"
+                                              Command="{Binding KillAllSelectedProgramsCommand}">
                                         <MenuItem.Icon>
                                             <materialDesign:PackIcon Kind="CloseOctagon" />
                                         </MenuItem.Icon>
                                     </MenuItem>
                                 </ContextMenu>
                             </ListView.ContextMenu>
-
                         </ListView>
                     </StackPanel>
                 </Border>
@@ -190,6 +191,7 @@
                                   x:Name="DataGridProgramManagement"
                                   CanUserAddRows="False"
                                   SelectionMode="Single"
+                                  SelectedItem="{Binding SelectedViewProgram, Mode=TwoWay}"
                                   VerticalScrollBarVisibility="Auto"
                                   HorizontalScrollBarVisibility="Disabled"
                                   AutoGenerateColumns="False"
@@ -200,12 +202,16 @@
                             </DataGrid.Resources>
                             <DataGrid.ContextMenu>
                                 <ContextMenu Padding="0">
-                                    <MenuItem Header="프로그램 시작">
+                                    <MenuItem Header="프로그램 시작"
+                                              Command="{Binding RunSingleProgramCommand}"
+                                              CommandParameter="{Binding SelectedViewProgram}">
                                         <MenuItem.Icon>
                                             <materialDesign:PackIcon Kind="PlayBoxMultiple" />
                                         </MenuItem.Icon>
                                     </MenuItem>
-                                    <MenuItem Header="프로그램 종료">
+                                    <MenuItem Header="프로그램 종료"
+                                              Command="{Binding KillSingleProgramCommand}"
+                                              CommandParameter="{Binding SelectedViewProgram}">
                                         <MenuItem.Icon>
                                             <materialDesign:PackIcon Kind="CloseOctagon" />
                                         </MenuItem.Icon>
@@ -356,15 +362,20 @@
                     Style="{DynamicResource ContentPanel}">
                 <Grid>
                     <ListView ItemTemplate="{DynamicResource ProgramViewListDataTemplate}"
-                              ItemsSource="{Binding SelectedViewComputer.Programs}">
+                              ItemsSource="{Binding SelectedViewComputer.Programs}"
+                              SelectedItem="{Binding SelectedControlProgram, Mode=TwoWay}">
                         <ListView.ContextMenu>
                             <ContextMenu Padding="0">
-                                <MenuItem Header="프로그램 시작">
+                                <MenuItem Header="프로그램 시작"
+                                          Command="{Binding RunSingleProgramCommand}"
+                                          CommandParameter="{Binding SelectedControlProgram}">
                                     <MenuItem.Icon>
                                         <materialDesign:PackIcon Kind="PlayBoxMultiple" />
                                     </MenuItem.Icon>
                                 </MenuItem>
-                                <MenuItem Header="프로그램 종료">
+                                <MenuItem Header="프로그램 종료"
+                                          Command="{Binding KillSingleProgramCommand}"
+                                          CommandParameter="{Binding SelectedControlProgram}">
                                     <MenuItem.Icon>
                                         <materialDesign:PackIcon Kind="CloseOctagon" />
                                     </MenuItem.Icon>

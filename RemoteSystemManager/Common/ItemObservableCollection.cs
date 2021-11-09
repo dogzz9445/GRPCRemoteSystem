@@ -12,6 +12,9 @@ namespace RemoteSystemManager.Common
     public class ItemObservableCollection<T> : ObservableCollection<T>
         where T : INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler ItemPropertyChanged;
+
+
         public ItemObservableCollection() : base()
         {
             Initialize();
@@ -72,6 +75,7 @@ namespace RemoteSystemManager.Common
 
         private void OnItemPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
+            ItemPropertyChanged?.Invoke(sender, e);
             //OnPropertyChanged(e);
             //OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.));
         }

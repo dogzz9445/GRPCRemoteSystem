@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Net.Client;
 using RemoteSystem.Remote;
+using RemoteSystemManager.ViewModel;
 
 namespace RemoteSystemManager
 {
@@ -34,17 +35,6 @@ namespace RemoteSystemManager
                 // ------------------
                 // 아이콘 초기화
                 TrayTaskbarIcon.Icon = new System.Drawing.Icon(@"Graphicloads.ico");
-
-                //try
-                //{
-                //    var channel = GrpcChannel.ForAddress("https://localhost:5001");
-                //    var client = new Remote.RemoteClient(channel);
-                //    var heartBeat = client.GetHeartBeat(new Empty());
-                //}
-                //catch (Exception except)
-                //{
-                //    Console.WriteLine(except.ToString());
-                //}
 
                 // ------------------
                 // 이벤트 등록
@@ -75,7 +65,8 @@ namespace RemoteSystemManager
 
         private void MainTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
+            ComputerViewModel.Instance.UpdateManagedProgramNames();
+            //ComputerViewModel.Instance.UpdateManagedPrograms("전체");
         }
     }
 }

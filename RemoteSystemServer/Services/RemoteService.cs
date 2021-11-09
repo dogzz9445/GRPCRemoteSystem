@@ -32,6 +32,16 @@ namespace RemoteSystemServer
                 Message = "Hello "
             });
         }
+
+        public override Task<MessageMacAddress> GetMacAddress(Empty request, ServerCallContext context)
+        {
+            // TODO:
+            return Task.FromResult(new MessageMacAddress
+            {
+                MacAddress = "Sample"
+            });
+        }
+
         public override Task<Performance> GetPerformance(Empty request, ServerCallContext context)
         {
             return Task.FromResult(new Performance
