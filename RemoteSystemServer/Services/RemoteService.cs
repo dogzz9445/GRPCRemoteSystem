@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
@@ -35,10 +36,15 @@ namespace RemoteSystemServer
 
         public override Task<MessageMacAddress> GetMacAddress(Empty request, ServerCallContext context)
         {
-            // TODO:
+            var macAddress = NetworkInterface.GetAllNetworkInterfaces()
+                .Where(nic =>
+                    nic.OperationalStatus == OperationalStatus.Up &&
+                    nic.NetworkInterfaceType != NetworkInterfaceType.Loopback)
+                .Select(nic => nic.GetPhysicalAddress().ToString()).FirstOrDefault();
+            
             return Task.FromResult(new MessageMacAddress
             {
-                MacAddress = "Sample"
+                MacAddress = macAddress
             });
         }
 

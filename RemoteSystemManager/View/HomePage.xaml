@@ -352,6 +352,11 @@
                                                 Binding="{Binding ComputerIp}"
                                                 ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}" />
 
+                            <DataGridTextColumn Header="맥 주소"
+                                                IsReadOnly="True"
+                                                Binding="{Binding ComputerMacAddress}"
+                                                ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}" />
+
                         </DataGrid.Columns>
                     </DataGrid>
                 </StackPanel>

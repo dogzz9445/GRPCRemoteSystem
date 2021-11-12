@@ -66,7 +66,14 @@ namespace RemoteSystemManager
         private void MainTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ComputerViewModel.Instance.UpdateManagedProgramNames();
-            //ComputerViewModel.Instance.UpdateManagedPrograms("전체");
+            if (((sender as TabControl).SelectedItem as TabItem).Tag.ToString() == "HomePage")
+            {
+
+            }
+            else if (((sender as TabControl).SelectedItem as TabItem).Tag.ToString() == "HomePage")
+            {
+                //ComputerSettingPage
+            }
         }
     }
 }
