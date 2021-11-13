@@ -10,7 +10,9 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Windows;
+using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using RemoteSystem.Remote;
 
@@ -19,24 +21,8 @@ namespace RemoteSystemManager.ViewModel
     public class ComputerViewModel : BindableBase
     {
         #region 싱글톤 구현
-        private static ComputerViewModel _instance;
 
-        private ComputerViewModel()
-        {
-            Computers = new ItemObservableCollection<Computer>();
-            ListManagedPrograms = new ItemObservableCollection<Program>();
-            ListManagedProgramNames = new ObservableCollection<string>();
-            
-            Computers.ItemPropertyChanged += (s, e) =>
-            {
-                if (e.PropertyName == nameof(Computer.ComputerIp))
-                {
-                    Console.WriteLine(e.PropertyName);
-                }
-            };
-            
-            ReadViewModel(ComputersConfigFileName);
-        }
+        private static ComputerViewModel _instance;
 
         public static ComputerViewModel Instance
         {
@@ -46,10 +32,32 @@ namespace RemoteSystemManager.ViewModel
                 {
                     _instance = new ComputerViewModel();
                 }
+
                 return _instance;
             }
         }
+
         #endregion
+
+        private ComputerViewModel()
+        {
+            Computers = new ItemObservableCollection<Computer>();
+            ListManagedPrograms = new ItemObservableCollection<Program>();
+            ListManagedProgramNames = new ObservableCollection<string>();
+
+            Computers.ItemPropertyChanged += (s, e) =>
+            {
+                if (e.PropertyName == nameof(Computer.ComputerIp))
+                {
+                    Console.WriteLine(e.PropertyName);
+                }
+            };
+
+            ReadViewModel(ComputersConfigFileName);
+            MonitoringTimer.Start();
+        }
+
+        public Timer MonitoringTimer { get; } = new Timer(1000);
 
         private static Func<Action, Task> callOnUiThread = async (handler) =>
             await Application.Current.Dispatcher.InvokeAsync(handler);
@@ -66,16 +74,17 @@ namespace RemoteSystemManager.ViewModel
         private Computer _selectedEditingComputer;
         private Program _selectedEditingProgram;
 
+        #region Public 변수 정의
 
         public ItemObservableCollection<Computer> Computers
         {
-            get => _computers; 
+            get => _computers;
             set => SetCollectionProperty(ref _computers, value);
         }
 
         public ItemObservableCollection<Program> ListManagedPrograms
         {
-            get => _listManagedPrograms; 
+            get => _listManagedPrograms;
             set => SetCollectionProperty(ref _listManagedPrograms, value);
         }
 
@@ -87,7 +96,7 @@ namespace RemoteSystemManager.ViewModel
 
         public Computer SelectedViewComputer
         {
-            get => _selectedViewComputer; 
+            get => _selectedViewComputer;
             set => SetProperty(ref _selectedViewComputer, value);
         }
 
@@ -111,7 +120,7 @@ namespace RemoteSystemManager.ViewModel
 
         public Computer SelectedEditingComputer
         {
-            get => _selectedEditingComputer; 
+            get => _selectedEditingComputer;
             set => SetProperty(ref _selectedEditingComputer, value);
         }
 
@@ -121,13 +130,15 @@ namespace RemoteSystemManager.ViewModel
             set => SetProperty(ref _selectedEditingProgram, value);
         }
 
+        #endregion
+
         public bool? IsAllSelectedComputers
         {
             get
             {
                 var selected = Computers.Select(item => item.IsSelected).Distinct().ToList();
-                return selected.Count == 1 ? selected.Single() : (bool?)null;
-            } 
+                return selected.Count == 1 ? selected.Single() : (bool?) null;
+            }
             set
             {
                 if (value.HasValue)
@@ -137,12 +148,13 @@ namespace RemoteSystemManager.ViewModel
                 }
             }
         }
+
         public bool? IsAllSelectedPrograms
         {
             get
             {
                 var selected = ListManagedPrograms.Select(item => item.IsSelected).Distinct().ToList();
-                return selected.Count == 1 ? selected.Single() : (bool?)null;
+                return selected.Count == 1 ? selected.Single() : (bool?) null;
             }
             set
             {
@@ -169,6 +181,7 @@ namespace RemoteSystemManager.ViewModel
                 model.IsSelected = select;
             }
         }
+
         public IEnumerable<Program> GetAllPrograms()
         {
             if (Computers != null)
@@ -198,7 +211,8 @@ namespace RemoteSystemManager.ViewModel
             }
         }
 
-        #region 커맨드들
+        #region 커맨드들 / 프로그램 시작 종료, 컴퓨터 시작 종료
+
         private DelegateCommand _runAllProgramsCommand;
         private DelegateCommand _killAllProgramsCommand;
         private DelegateCommand _runAllSelectedProgramsCommand;
@@ -443,24 +457,15 @@ namespace RemoteSystemManager.ViewModel
 
         public DelegateCommand SaveComputersCommand =>
             _saveComputersCommand ??= new DelegateCommand(
-                () =>
-                {
-                    Task.Run(async () => await SaveViewModel(ComputersConfigFileName));
-                });
+                () => { Task.Run(async () => await SaveViewModel(ComputersConfigFileName)); });
 
         public DelegateCommand ReadComputersCommand =>
             _readComputersCommand ??= new DelegateCommand(
-                () =>
-                {
-                    ReadViewModel(ComputersConfigFileName);
-                });
+                () => { ReadViewModel(ComputersConfigFileName); });
 
         public DelegateCommand AddComputerCommand =>
             _addComputerCommand ??= new DelegateCommand(
-                () =>
-                {
-                    Computers.Add(new Computer());
-                });
+                () => { Computers.Add(new Computer()); });
 
         public DelegateCommand RemoveComputerCommand =>
             _removeComputerCommand ??= new DelegateCommand(
@@ -598,6 +603,7 @@ namespace RemoteSystemManager.ViewModel
                     {
                         computers.ForEach(Computers.Add);
                     }
+
                     ListManagedPrograms.Clear();
                     GetAllPrograms().ToList().ForEach(ListManagedPrograms.Add);
                     ListManagedProgramNames.Clear();
@@ -621,6 +627,7 @@ namespace RemoteSystemManager.ViewModel
                 await JsonManager.WritJsonFile(fileName, Computers);
             }
         }
+
         #endregion
 
         #region 통신 / 컴퓨터 시작,재시작,종료, 프로그램 시작,종료
@@ -674,7 +681,7 @@ namespace RemoteSystemManager.ViewModel
             // TODO:
             // if (ComputerMacAddress is validate)
             await WakeOnLan.SendMagicPacketAsync(computer.ComputerMacAddress);
-            
+
             // TODO:
             // Task<int>로 result값 받아서 화면에 띄워주기
         }
@@ -719,5 +726,65 @@ namespace RemoteSystemManager.ViewModel
 
         #endregion
 
+        #region 타이머 및 통신 / 컴퓨터 상태 및 맥주소 받아오기
+
+        public void RunMonitoringMacAddresses(object sender, ElapsedEventArgs e)
+        {
+            if (Computers == null)
+            {
+                return;
+            }
+
+            foreach (var computer in Computers)
+            {
+                Task.Run(async () =>
+                {
+                    try
+                    {
+                        Console.WriteLine(computer.ComputerIp + ":5001");
+                        Channel channel = new Channel(computer.ComputerIp + ":5001", ChannelCredentials.Insecure);
+                        Console.WriteLine(channel.ToString());
+                        var client = new Remote.RemoteClient(channel);
+                        Console.WriteLine(client.ToString());
+                        var reply = await client.GetMacAddressAsync(new Empty());
+                        Console.WriteLine(reply.ToString());
+                        await channel.ShutdownAsync();
+                        Console.WriteLine(reply.MacAddress);
+                        if (!string.IsNullOrEmpty(reply.MacAddress))
+                        {
+                            computer.ComputerMacAddress = reply.MacAddress;
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e);
+                    }
+                });
+            }
+        }
+
+        public void RunMonitoringComputerStatus(object sender, ElapsedEventArgs e)
+        {
+            if (Computers == null)
+            {
+                return;
+            }
+
+            foreach (var computer in Computers)
+            {
+                //TODO:ODO:
+            }
+        }
+
+        public void RunMonitoringProgramStatus(object sender, ElapsedEventArgs e)
+        {
+            if (Computers == null)
+            {
+                return;
+                // TODO:ODO:
+            }
+        }
+
+        #endregion
     }
 }

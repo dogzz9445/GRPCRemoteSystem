@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -68,11 +69,11 @@ namespace RemoteSystemManager
             ComputerViewModel.Instance.UpdateManagedProgramNames();
             if (((sender as TabControl).SelectedItem as TabItem).Tag.ToString() == "HomePage")
             {
-
+                ComputerViewModel.Instance.MonitoringTimer.Elapsed += new ElapsedEventHandler(ComputerViewModel.Instance.RunMonitoringMacAddresses);
             }
-            else if (((sender as TabControl).SelectedItem as TabItem).Tag.ToString() == "HomePage")
+            else if (((sender as TabControl).SelectedItem as TabItem).Tag.ToString() == "ComputerSettingPage")
             {
-                //ComputerSettingPage
+                ComputerViewModel.Instance.MonitoringTimer.Elapsed -= new ElapsedEventHandler(ComputerViewModel.Instance.RunMonitoringMacAddresses);
             }
         }
     }

@@ -348,12 +348,12 @@
 
                             <DataGridTextColumn Header="컴퓨터 주소"
                                                 IsReadOnly="True"
-                                                Width="*"
                                                 Binding="{Binding ComputerIp}"
                                                 ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}" />
 
                             <DataGridTextColumn Header="맥 주소"
                                                 IsReadOnly="True"
+                                                Width="*"
                                                 Binding="{Binding ComputerMacAddress}"
                                                 ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}" />
 
