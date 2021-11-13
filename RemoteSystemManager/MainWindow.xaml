@@ -17,14 +17,7 @@
         ResizeMode="NoResize"
         Height="1000"
         Width="1600">
-    <!--<Window.ContextMenu>
-        <ContextMenu Style="{StaticResource MaterialDesignContextMenu}">
-            <MenuItem Header="트레이"
-                      x:Name="MainMenuItemTray" />
-            <MenuItem Header="종료"
-                      x:Name="MainMenuItemClose" />
-        </ContextMenu>
-    </Window.ContextMenu>-->
+
     <Grid>
         <tb:TaskbarIcon x:Name="TrayTaskbarIcon"
                         Visibility="Visible"
