@@ -353,8 +353,13 @@
 
                             <DataGridTextColumn Header="맥 주소"
                                                 IsReadOnly="True"
-                                                Width="*"
                                                 Binding="{Binding ComputerMacAddress}"
+                                                ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}" />
+
+                            <DataGridTextColumn Header="컴퓨터 상태"
+                                                IsReadOnly="True"
+                                                Width="*"
+                                                Binding="{Binding ComputerStatus}"
                                                 ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}" />
 
                         </DataGrid.Columns>

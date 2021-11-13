@@ -14,6 +14,7 @@ namespace RemoteSystemManager.Model
         private string _computerName;
         private string _computerIp;
         private string _computerMacAddress;
+        private string _computerStatus;
         private ItemObservableCollection<Program> _programs;
 
         [JsonIgnore]
@@ -56,6 +57,13 @@ namespace RemoteSystemManager.Model
         {
             get => _computerMacAddress;
             set => SetProperty(ref _computerMacAddress, value);
+        }
+
+        [JsonProperty("ComputerStatus")]
+        public string ComputerStatus
+        {
+            get => _computerStatus;
+            set => SetProperty(ref _computerStatus, value);
         }
 
         public Computer()

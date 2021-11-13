@@ -13,12 +13,6 @@ namespace RemoteSystemServer
 {
     public class RemoteService : Remote.RemoteBase
     {
-        private PerformanceCounter m_cpuPerformanceCounter =
-            new PerformanceCounter("Processor", "% Processor Time", "_Total");
-
-        private PerformanceCounter m_memoryPerformanceCounter =
-            new PerformanceCounter("Memory", "% Committed Bytes in Use");
-
         private readonly ILogger<RemoteService> _logger;
         public RemoteService(ILogger<RemoteService> logger)
         {

@@ -741,15 +741,10 @@ namespace RemoteSystemManager.ViewModel
                 {
                     try
                     {
-                        Console.WriteLine(computer.ComputerIp + ":5001");
-                        Channel channel = new Channel(computer.ComputerIp + ":5001", ChannelCredentials.Insecure);
-                        Console.WriteLine(channel.ToString());
+                        Channel channel = new Channel(computer.ComputerIp + ":5000", ChannelCredentials.Insecure);
                         var client = new Remote.RemoteClient(channel);
-                        Console.WriteLine(client.ToString());
                         var reply = await client.GetMacAddressAsync(new Empty());
-                        Console.WriteLine(reply.ToString());
                         await channel.ShutdownAsync();
-                        Console.WriteLine(reply.MacAddress);
                         if (!string.IsNullOrEmpty(reply.MacAddress))
                         {
                             computer.ComputerMacAddress = reply.MacAddress;
@@ -757,6 +752,7 @@ namespace RemoteSystemManager.ViewModel
                     }
                     catch (Exception e)
                     {
+                        computer.ComputerStatus = e.ToString();
                         Console.WriteLine(e);
                     }
                 });
