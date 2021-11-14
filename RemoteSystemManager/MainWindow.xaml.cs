@@ -67,13 +67,19 @@ namespace RemoteSystemManager
         private void MainTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ComputerViewModel.Instance.UpdateManagedProgramNames();
-            if (((sender as TabControl).SelectedItem as TabItem).Tag.ToString() == "HomePage")
+
+            switch (((sender as TabControl)?.SelectedItem as TabItem)?.Tag.ToString())
             {
-                ComputerViewModel.Instance.MonitoringTimer.Elapsed += new ElapsedEventHandler(ComputerViewModel.Instance.RunMonitoringMacAddresses);
-            }
-            else if (((sender as TabControl).SelectedItem as TabItem).Tag.ToString() == "ComputerSettingPage")
-            {
-                ComputerViewModel.Instance.MonitoringTimer.Elapsed -= new ElapsedEventHandler(ComputerViewModel.Instance.RunMonitoringMacAddresses);
+                case "HomePage":
+                    ComputerViewModel.Instance.MonitoringTimer.Elapsed += new ElapsedEventHandler(ComputerViewModel.Instance.RunMonitoringComputer);
+                    ComputerViewModel.Instance.IsComputerStatusCheck = true;
+                    ComputerViewModel.Instance.IsMacAddressCheck = true;
+                    break;
+                case "ComputerSettingPage":
+                    ComputerViewModel.Instance.MonitoringTimer.Elapsed -= new ElapsedEventHandler(ComputerViewModel.Instance.RunMonitoringComputer);
+                    break;
+                case "DistributionPage":
+                    break;
             }
         }
     }

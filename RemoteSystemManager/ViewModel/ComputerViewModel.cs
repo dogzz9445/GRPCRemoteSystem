@@ -11,10 +11,12 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
-using System.Windows;
+using System.Windows.Forms;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using RemoteSystem.Remote;
+using Application = System.Windows.Application;
+using Timer = System.Timers.Timer;
 
 namespace RemoteSystemManager.ViewModel
 {
@@ -73,6 +75,24 @@ namespace RemoteSystemManager.ViewModel
         private Program _selectedControlProgram;
         private Computer _selectedEditingComputer;
         private Program _selectedEditingProgram;
+
+        public bool IsMacAddressCheck
+        {
+            get => IsMacAddressCheck;
+            set
+            {
+                IsMacAddressCheck = value;
+                if (IsMacAddressCheck)
+                {
+                    Task.Run(async () =>
+                    {
+                        await Task.Delay(10000);
+                        IsMacAddressCheck = false;
+                    });
+                }
+            }
+        }
+        public bool IsComputerStatusCheck { get; set; } = false;
 
         #region Public 변수 정의
 
@@ -728,56 +748,41 @@ namespace RemoteSystemManager.ViewModel
 
         #region 타이머 및 통신 / 컴퓨터 상태 및 맥주소 받아오기
 
-        public void RunMonitoringMacAddresses(object sender, ElapsedEventArgs e)
+        public void RunMonitoringComputer(object sender, ElapsedEventArgs e)
         {
             if (Computers == null)
             {
                 return;
             }
 
-            foreach (var computer in Computers)
+            if (IsComputerStatusCheck)
             {
-                Task.Run(async () =>
+                foreach (var computer in Computers)
                 {
-                    try
+                    Task.Run(async () =>
                     {
-                        Channel channel = new Channel(computer.ComputerIp + ":5000", ChannelCredentials.Insecure);
-                        var client = new Remote.RemoteClient(channel);
-                        var reply = await client.GetMacAddressAsync(new Empty());
-                        await channel.ShutdownAsync();
-                        if (!string.IsNullOrEmpty(reply.MacAddress))
+                        try
                         {
-                            computer.ComputerMacAddress = reply.MacAddress;
+                            Channel channel = new Channel(computer.ComputerIp + ":5000", ChannelCredentials.Insecure);
+                            var client = new Remote.RemoteClient(channel);
+                            if (IsMacAddressCheck)
+                            {
+                                var reply = await client.GetMacAddressAsync(new Empty());
+                                if (!string.IsNullOrEmpty(reply.MacAddress))
+                                {
+                                    computer.ComputerMacAddress = reply.MacAddress;
+                                }
+                            }
+
+                            await channel.ShutdownAsync();
                         }
-                    }
-                    catch (Exception e)
-                    {
-                        computer.ComputerStatus = e.ToString();
-                        Console.WriteLine(e);
-                    }
-                });
-            }
-        }
-
-        public void RunMonitoringComputerStatus(object sender, ElapsedEventArgs e)
-        {
-            if (Computers == null)
-            {
-                return;
-            }
-
-            foreach (var computer in Computers)
-            {
-                //TODO:ODO:
-            }
-        }
-
-        public void RunMonitoringProgramStatus(object sender, ElapsedEventArgs e)
-        {
-            if (Computers == null)
-            {
-                return;
-                // TODO:ODO:
+                        catch (Exception e)
+                        {
+                            computer.ComputerStatus = e.ToString();
+                            Console.WriteLine(e);
+                        }
+                    });
+                }
             }
         }
 

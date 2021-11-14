@@ -7,7 +7,7 @@ option csharp_namespace = "RemoteSystem.Remote";
 
 service Remote
 {
-    rpc GetMacAddress (google.protobuf.Empty) returns (MessageMacAddress);
+  rpc GetMacAddress (google.protobuf.Empty) returns (MessageMacAddress);
 	rpc GetHeartBeat (google.protobuf.Empty) returns (HeartBeat);
 	rpc GetPerformance (google.protobuf.Empty) returns (Performance);
 	rpc PostComputerControlMessage (ComputerControl) returns (google.protobuf.Empty);
