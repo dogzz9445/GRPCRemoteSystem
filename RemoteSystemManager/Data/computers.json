@@ -1,0 +1,100 @@
+[
+  {
+    "ComputerName": "1호기",
+    "ComputerIp": "192.168.0.21",
+    "Programs": [
+      {
+        "ProgramName": "계기판프로그램",
+        "ProgramPath": "C:\\Users\\dmjan\\Downloads\\test\\SW-AD61800638E002-EXF-R0.exe",
+        "ComputerName": "1호기"
+      }
+    ]
+  },
+  {
+    "ComputerName": "2호기",
+    "ComputerIp": "192.168.0.22",
+    "Programs": [
+      {
+        "ProgramName": "영상프로그램",
+        "ProgramPath": "C:\\영상\\프로그램.exe",
+        "ComputerName": "2호기"
+      },
+      {
+        "ProgramName": "음성프로그램",
+        "ProgramPath": "C:\\영상\\프로그램.exe",
+        "ComputerName": "2호기"
+      }
+    ]
+  },
+  {
+    "ComputerName": "3호기",
+    "ComputerIp": "192.168.0.23",
+    "Programs": []
+  },
+  {
+    "ComputerName": "4호기",
+    "ComputerIp": "192.168.0.24",
+    "Programs": []
+  },
+  {
+    "ComputerName": "5호기",
+    "ComputerIp": "192.168.0.25",
+    "Programs": []
+  },
+  {
+    "ComputerName": "6호기",
+    "ComputerIp": "192.168.0.26",
+    "Programs": []
+  },
+  {
+    "ComputerName": "7호기",
+    "ComputerIp": "192.168.0.27",
+    "Programs": []
+  },
+  {
+    "ComputerName": "8호기",
+    "ComputerIp": "192.168.0.28",
+    "Programs": []
+  },
+  {
+    "ComputerName": "9호기",
+    "ComputerIp": "192.168.0.29",
+    "Programs": []
+  },
+  {
+    "ComputerName": "10호기",
+    "ComputerIp": "192.168.0.30",
+    "Programs": []
+  },
+  {
+    "ComputerName": "11호기",
+    "ComputerIp": "192.168.0.31",
+    "Programs": []
+  },
+  {
+    "ComputerName": "12호기",
+    "ComputerIp": "192.168.0.32",
+    "Programs": []
+  },
+  {
+    "ComputerName": "서버",
+    "ComputerIp": "192.168.0.20",
+    "Programs": []
+  },
+  {
+    "ComputerName": "IOS",
+    "ComputerIp": "192.168.0.10",
+    "Programs": []
+  },
+  {
+    "ComputerName": "CCTV",
+    "ComputerIp": "192.168.0.40",
+    "Programs": [
+      {
+        "ProgramName": "CCTV 프로그램",
+        "ProgramPath": "123123",
+        "ComputerName": "CCTV"
+      }
+    ]
+  }
+]

@@ -166,7 +166,8 @@
                     <Grid >
                         <Grid.RowDefinitions>
                             <RowDefinition Height="64" />
-                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*"
+                                           MaxHeight="492" />
                         </Grid.RowDefinitions>
                         <Grid Grid.Row="0"
                               Margin="8">
@@ -178,7 +179,8 @@
                                     Style="{StaticResource MaterialDesignRaisedDarkButton}"
                                     Width="{DynamicResource ButtonWidth}"
                                     Margin="8"
-                                    Content="프로그램 시작" />
+                                    Content="프로그램 시작"
+                                    Cursor="Hand" />
                             <Button Grid.Column="1"
                                     Style="{StaticResource MaterialDesignRaisedDarkButton}"
                                     Width="{DynamicResource ButtonWidth}"
@@ -289,6 +291,7 @@
                                 Content="컴퓨터 종료" />
                     </Grid>
                     <DataGrid x:Name="DataGridComputerManagement"
+                              MaxHeight="792"
                               Margin="8 0 8 0"
                               SelectionMode="Single"
                               VerticalScrollBarVisibility="Auto"

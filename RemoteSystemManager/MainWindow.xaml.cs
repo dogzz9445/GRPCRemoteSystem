@@ -73,7 +73,7 @@ namespace RemoteSystemManager
                 case "HomePage":
                     ComputerViewModel.Instance.MonitoringTimer.Elapsed += new ElapsedEventHandler(ComputerViewModel.Instance.RunMonitoringComputer);
                     ComputerViewModel.Instance.IsComputerStatusCheck = true;
-                    ComputerViewModel.Instance.IsMacAddressCheck = true;
+                    //ComputerViewModel.Instance.IsMacAddressCheck = true;
                     break;
                 case "ComputerSettingPage":
                     ComputerViewModel.Instance.MonitoringTimer.Elapsed -= new ElapsedEventHandler(ComputerViewModel.Instance.RunMonitoringComputer);

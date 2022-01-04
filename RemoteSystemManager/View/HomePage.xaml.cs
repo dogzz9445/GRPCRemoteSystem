@@ -29,7 +29,7 @@ namespace RemoteSystemManager.View
             InitializeComponent();
 
             ComputerViewModel = ComputerViewModel.Instance;
-            this.DataContext = ComputerViewModel;
+            DataContext = ComputerViewModel;
             DataGridComputerManagement.ItemsSource = ComputerViewModel.Computers;
             DataGridProgramManagement.ItemsSource = ComputerViewModel.ListManagedPrograms;
             ListViewProgramNames.ItemsSource = ComputerViewModel.ListManagedProgramNames;

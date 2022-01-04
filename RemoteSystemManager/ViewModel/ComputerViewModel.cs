@@ -82,14 +82,14 @@ namespace RemoteSystemManager.ViewModel
             set
             {
                 IsMacAddressCheck = value;
-                if (IsMacAddressCheck)
-                {
-                    Task.Run(async () =>
-                    {
-                        await Task.Delay(10000);
-                        IsMacAddressCheck = false;
-                    });
-                }
+                //if (IsMacAddressCheck)
+                //{
+                //    Task.Run(async () =>
+                //    {
+                //        await Task.Delay(10000);
+                //        IsMacAddressCheck = false;
+                //    });
+                //}
             }
         }
         public bool IsComputerStatusCheck { get; set; } = false;
@@ -625,8 +625,8 @@ namespace RemoteSystemManager.ViewModel
                     }
 
                     ListManagedPrograms.Clear();
-                    GetAllPrograms().ToList().ForEach(ListManagedPrograms.Add);
                     ListManagedProgramNames.Clear();
+                    GetAllPrograms().ToList().ForEach(ListManagedPrograms.Add);
                     GetEnumerableAllProgramNames().ToList().ForEach(ListManagedProgramNames.Add);
                     IsAllSelectedComputers = false;
                     IsAllSelectedPrograms = false;
@@ -755,35 +755,35 @@ namespace RemoteSystemManager.ViewModel
                 return;
             }
 
-            if (IsComputerStatusCheck)
-            {
-                foreach (var computer in Computers)
-                {
-                    Task.Run(async () =>
-                    {
-                        try
-                        {
-                            Channel channel = new Channel(computer.ComputerIp + ":5000", ChannelCredentials.Insecure);
-                            var client = new Remote.RemoteClient(channel);
-                            if (IsMacAddressCheck)
-                            {
-                                var reply = await client.GetMacAddressAsync(new Empty());
-                                if (!string.IsNullOrEmpty(reply.MacAddress))
-                                {
-                                    computer.ComputerMacAddress = reply.MacAddress;
-                                }
-                            }
+            //if (IsComputerStatusCheck)
+            //{
+            //    foreach (var computer in Computers)
+            //    {
+            //        Task.Run(async () =>
+            //        {
+            //            try
+            //            {
+            //                Channel channel = new Channel(computer.ComputerIp + ":5000", ChannelCredentials.Insecure);
+            //                var client = new Remote.RemoteClient(channel);
+            //                if (IsMacAddressCheck)
+            //                {
+            //                    var reply = await client.GetMacAddressAsync(new Empty());
+            //                    if (!string.IsNullOrEmpty(reply.MacAddress))
+            //                    {
+            //                        computer.ComputerMacAddress = reply.MacAddress;
+            //                    }
+            //                }
 
-                            await channel.ShutdownAsync();
-                        }
-                        catch (Exception e)
-                        {
-                            computer.ComputerStatus = e.ToString();
-                            Console.WriteLine(e);
-                        }
-                    });
-                }
-            }
+            //                await channel.ShutdownAsync();
+            //            }
+            //            catch (Exception e)
+            //            {
+            //                computer.ComputerStatus = e.ToString();
+            //                Console.WriteLine(e);
+            //            }
+            //        });
+            //    }
+            //}
         }
 
         #endregion
