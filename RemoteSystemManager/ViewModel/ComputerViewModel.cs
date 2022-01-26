@@ -84,7 +84,7 @@ namespace RemoteSystemManager.ViewModel
                 IsMacAddressCheck = value;
                 //if (IsMacAddressCheck)
                 //{
-                //    Task.Run(async () =>
+                //    Task.Factory.StartNew(async () =>
                 //    {
                 //        await Task.Delay(10000);
                 //        IsMacAddressCheck = false;
@@ -268,7 +268,7 @@ namespace RemoteSystemManager.ViewModel
                     {
                         foreach (var program in computer.Programs)
                         {
-                            Task.Run(async () => await SendRunProgram(computer, program));
+                            Task.Factory.StartNew(async () => await SendRunProgram(computer, program));
                         }
                     }
                 });
@@ -281,7 +281,7 @@ namespace RemoteSystemManager.ViewModel
                     {
                         foreach (var program in computer.Programs)
                         {
-                            Task.Run(async () => await SendKillProgram(computer, program));
+                            Task.Factory.StartNew(async () => await SendKillProgram(computer, program));
                         }
                     }
                 });
@@ -296,7 +296,7 @@ namespace RemoteSystemManager.ViewModel
                         {
                             if (program.ProgramName == SelectedViewProgramName)
                             {
-                                Task.Run(async () => await SendRunProgram(computer, program));
+                                Task.Factory.StartNew(async () => await SendRunProgram(computer, program));
                             }
                         }
                     }
@@ -312,7 +312,7 @@ namespace RemoteSystemManager.ViewModel
                         {
                             if (program.ProgramName == SelectedViewProgramName)
                             {
-                                Task.Run(async () => await SendKillProgram(computer, program));
+                                Task.Factory.StartNew(async () => await SendKillProgram(computer, program));
                             }
                         }
                     }
@@ -326,7 +326,7 @@ namespace RemoteSystemManager.ViewModel
                     {
                         if (computer.ComputerName == program.ComputerName)
                         {
-                            Task.Run(async () => await SendRunProgram(computer, program));
+                            Task.Factory.StartNew(async () => await SendRunProgram(computer, program));
                         }
                     }
                 });
@@ -339,7 +339,7 @@ namespace RemoteSystemManager.ViewModel
                     {
                         if (computer.ComputerName == program.ComputerName)
                         {
-                            Task.Run(async () => await SendKillProgram(computer, program));
+                            Task.Factory.StartNew(async () => await SendKillProgram(computer, program));
                         }
                     }
                 });
@@ -354,7 +354,7 @@ namespace RemoteSystemManager.ViewModel
                         {
                             if (program.IsSelected)
                             {
-                                Task.Run(async () => await SendRunProgram(computer, program));
+                                Task.Factory.StartNew(async () => await SendRunProgram(computer, program));
                             }
                         }
                     }
@@ -370,7 +370,7 @@ namespace RemoteSystemManager.ViewModel
                         {
                             if (program.IsSelected)
                             {
-                                Task.Run(async () => await SendKillProgram(computer, program));
+                                Task.Factory.StartNew(async () => await SendKillProgram(computer, program));
                             }
                         }
                     }
@@ -382,7 +382,7 @@ namespace RemoteSystemManager.ViewModel
                 {
                     foreach (var computer in Computers)
                     {
-                        Task.Run(async () => await SendStartComputer(computer));
+                        Task.Factory.StartNew(async () => await SendStartComputer(computer));
                     }
                 });
 
@@ -392,7 +392,7 @@ namespace RemoteSystemManager.ViewModel
                 {
                     foreach (var computer in Computers)
                     {
-                        Task.Run(async () => await SendRestartComputer(computer));
+                        Task.Factory.StartNew(async () => await SendRestartComputer(computer));
                     }
                 });
 
@@ -402,7 +402,7 @@ namespace RemoteSystemManager.ViewModel
                 {
                     foreach (var computer in Computers)
                     {
-                        Task.Run(async () => await SendShutdownComputer(computer));
+                        Task.Factory.StartNew(async () => await SendShutdownComputer(computer));
                     }
                 });
 
@@ -412,7 +412,7 @@ namespace RemoteSystemManager.ViewModel
                 {
                     if (SelectedViewComputer != null)
                     {
-                        Task.Run(async () => await SendStartComputer(SelectedViewComputer));
+                        Task.Factory.StartNew(async () => await SendStartComputer(SelectedViewComputer));
                     }
                 });
 
@@ -422,7 +422,7 @@ namespace RemoteSystemManager.ViewModel
                 {
                     if (SelectedViewComputer != null)
                     {
-                        Task.Run(async () => await SendRestartComputer(SelectedViewComputer));
+                        Task.Factory.StartNew(async () => await SendRestartComputer(SelectedViewComputer));
                     }
                 });
 
@@ -432,7 +432,7 @@ namespace RemoteSystemManager.ViewModel
                 {
                     if (SelectedViewComputer != null)
                     {
-                        Task.Run(async () => await SendShutdownComputer(SelectedViewComputer));
+                        Task.Factory.StartNew(async () => await SendShutdownComputer(SelectedViewComputer));
                     }
                 });
 
@@ -444,7 +444,7 @@ namespace RemoteSystemManager.ViewModel
                     {
                         if (computer.IsSelected)
                         {
-                            Task.Run(async () => await SendStartComputer(computer));
+                            Task.Factory.StartNew(async () => await SendStartComputer(computer));
                         }
                     }
                 });
@@ -457,7 +457,7 @@ namespace RemoteSystemManager.ViewModel
                     {
                         if (computer.IsSelected)
                         {
-                            Task.Run(async () => await SendRestartComputer(computer));
+                            Task.Factory.StartNew(async () => await SendRestartComputer(computer));
                         }
                     }
                 });
@@ -470,14 +470,14 @@ namespace RemoteSystemManager.ViewModel
                     {
                         if (computer.IsSelected)
                         {
-                            Task.Run(async () => await SendShutdownComputer(computer));
+                            Task.Factory.StartNew(async () => await SendShutdownComputer(computer));
                         }
                     }
                 });
 
         public DelegateCommand SaveComputersCommand =>
             _saveComputersCommand ??= new DelegateCommand(
-                () => { Task.Run(async () => await SaveViewModel(ComputersConfigFileName)); });
+                () => { Task.Factory.StartNew(async () => await SaveViewModel(ComputersConfigFileName)); });
 
         public DelegateCommand ReadComputersCommand =>
             _readComputersCommand ??= new DelegateCommand(
@@ -531,7 +531,7 @@ namespace RemoteSystemManager.ViewModel
             {
                 //TODO:
                 // if (validate ip is computer)
-                Task.Run(async () =>
+                Task.Factory.StartNew(async () =>
                 {
                     var macAddress = await WakeOnLan.GetMACAddressFromARP(computer.ComputerIp);
                     // TODO:
@@ -727,6 +727,7 @@ namespace RemoteSystemManager.ViewModel
 
         private async Task SendShutdownComputer(Computer computer)
         {
+            await Task.Yield();
             try
             {
                 ComputerControl computerControl = new ComputerControl()
@@ -759,7 +760,7 @@ namespace RemoteSystemManager.ViewModel
             //{
             //    foreach (var computer in Computers)
             //    {
-            //        Task.Run(async () =>
+            //        Task.Factory.StartNew(async () =>
             //        {
             //            try
             //            {
