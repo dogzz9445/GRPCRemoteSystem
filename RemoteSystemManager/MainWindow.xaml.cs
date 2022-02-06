@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Shell;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Net.Client;
 using RemoteSystem.Remote;
@@ -81,6 +82,21 @@ namespace RemoteSystemManager
                 case "DistributionPage":
                     break;
             }
+        }
+
+        private void ButtonMinimize_Click(object sender, RoutedEventArgs e)
+        {
+            WindowState = WindowState.Minimized;
+        }
+
+        private void ButtonMaximized_Click(object sender, RoutedEventArgs e)
+        {
+            WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
+        }
+
+        private void ButtonClose_Click(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Shutdown();
         }
     }
 }

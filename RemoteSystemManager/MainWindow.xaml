@@ -6,70 +6,149 @@
         xmlns:local="clr-namespace:RemoteSystemManager"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:tb="http://www.hardcodet.net/taskbar"
+        WindowStyle="None"
+        AllowsTransparency="True"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         TextElement.FontWeight="Regular"
         TextElement.FontSize="13"
         TextOptions.TextFormattingMode="Ideal"
         TextOptions.TextRenderingMode="Auto"
         FontFamily="{DynamicResource MaterialDesignFont}"
+        Background="#F8242424"
         mc:Ignorable="d"
         Title="RemoteControl"
-        ResizeMode="NoResize"
         Height="1000"
-        Width="1600">
+        Width="1600"
+        BorderThickness="{Binding Source={x:Static SystemParameters.WindowResizeBorderThickness}}"
+        WindowStartupLocation="CenterScreen">
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="{x:Static SystemParameters.CaptionHeight}"
+                      GlassFrameThickness="0"
+                      ResizeBorderThickness="3"
+                      NonClientFrameEdges="None" />
+    </WindowChrome.WindowChrome>
 
-    <Grid>
-        <tb:TaskbarIcon x:Name="TrayTaskbarIcon"
-                        Visibility="Visible"
-                        ToolTip="Tray Example"
-                        MenuActivation="LeftOrRightClick">
-            <tb:TaskbarIcon.ContextMenu>
-                <ContextMenu>
-                    <MenuItem Header="열기">
-                        <MenuItem.Icon>
-                            <materialDesign:PackIcon Kind="Cog" />
-                        </MenuItem.Icon>
-                    </MenuItem>
-                    <Separator />
-                    <MenuItem Header="종료">
-                        <MenuItem.Icon>
-                            <materialDesign:PackIcon Kind="CloseThick" />
-                        </MenuItem.Icon>
-                    </MenuItem>
-                </ContextMenu>
-            </tb:TaskbarIcon.ContextMenu>
-        </tb:TaskbarIcon>
-        <TabControl Style="{StaticResource MaterialDesignNavigatilRailTabControl}"
-                    SelectionChanged="MainTabControl_SelectionChanged">
-            <TabItem ToolTip="홈"
-                     Tag="HomePage"
-                     Style="{StaticResource MaterialDesignNavigationRailTabItem}">
-                <TabItem.Header>
-                    <materialDesign:PackIcon Kind="Home"
-                                             Width="32"
-                                             Height="32" />
-                </TabItem.Header>
-                <Frame Source="/View/HomePage.xaml" />
-            </TabItem>
-            <TabItem ToolTip="컴퓨터 설정"
-                     Tag="ComputerSettingPage"
-                     Style="{StaticResource MaterialDesignNavigationRailTabItem}">
-                <TabItem.Header>
-                    <materialDesign:PackIcon Kind="MonitorEdit"
-                                             Width="32"
-                                             Height="32" />
-                </TabItem.Header>
-                <Frame Source="/View/ComputerSettingPage.xaml" />
-            </TabItem>
-            <TabItem ToolTip="실행파일 배포"
-                     Tag="DistributionPage"
-                     Style="{StaticResource MaterialDesignNavigationRailTabItem}">
-                <TabItem.Header>
-                    <materialDesign:PackIcon Kind="CubeSend"
-                                             Width="32"
-                                             Height="32" />
-                </TabItem.Header>
-            </TabItem>
-        </TabControl>
-    </Grid>
+    <Window.Resources>
+        <Style TargetType="{x:Type Button}"
+               x:Key="WindowButton">
+            <Setter Property="DockPanel.Dock"
+                    Value="Right" />
+            <Setter Property="Width"
+                    Value="24" />
+            <Setter Property="WindowChrome.IsHitTestVisibleInChrome"
+                    Value="True" />
+            <Setter Property="Background"
+                    Value="Transparent" />
+            <Setter Property="Foreground"
+                    Value="White" />
+            <Setter Property="BorderThickness"
+                    Value="0" />
+        </Style>
+
+    </Window.Resources>
+
+    <DockPanel LastChildFill="True"
+               Background="#F8242424">
+        <Border DockPanel.Dock="Top"
+                Height="{x:Static SystemParameters.CaptionHeight}"
+                x:Name="titlebar">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="24" />
+                    <ColumnDefinition Width="24" />
+                    <ColumnDefinition Width="24" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="RemoteSystem"
+                           Margin="10,0,0,0"
+                           VerticalAlignment="Center">
+                    <TextBlock.Effect>
+                        <DropShadowEffect Color="White"
+                                          ShadowDepth="1" />
+                    </TextBlock.Effect>
+                </TextBlock>
+                <Button Grid.Column="1"
+                        Style="{StaticResource WindowButton}"
+                        Click="ButtonMinimize_Click"
+                        HorizontalAlignment="Center">
+                    <materialDesign:PackIcon Kind="WindowMinimize"
+                                             Width="16"
+                                             Height="16" />
+                </Button>
+                <Button Grid.Column="2"
+                        Style="{StaticResource WindowButton}"
+                        Click="ButtonMaximized_Click"
+                        HorizontalAlignment="Center">
+                    <materialDesign:PackIcon Kind="WindowMaximize"
+                                             Width="16"
+                                             Height="16" />
+                </Button>
+                <Button Grid.Column="3"
+                        Style="{StaticResource WindowButton}"
+                        Click="ButtonClose_Click"
+                        HorizontalAlignment="Center">
+                    <materialDesign:PackIcon Kind="Close"
+                                             Width="16"
+                                             Height="16" />
+                </Button>
+            </Grid>
+        </Border>
+        <Border>
+            <Grid>
+                <tb:TaskbarIcon x:Name="TrayTaskbarIcon"
+                                Visibility="Visible"
+                                ToolTip="Tray Example"
+                                MenuActivation="LeftOrRightClick">
+                    <tb:TaskbarIcon.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="열기">
+                                <MenuItem.Icon>
+                                    <materialDesign:PackIcon Kind="Cog" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <Separator />
+                            <MenuItem Header="종료">
+                                <MenuItem.Icon>
+                                    <materialDesign:PackIcon Kind="CloseThick" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                        </ContextMenu>
+                    </tb:TaskbarIcon.ContextMenu>
+                </tb:TaskbarIcon>
+                <TabControl Style="{StaticResource MaterialDesignNavigatilRailTabControl}"
+                            Background="Transparent"
+                            SelectionChanged="MainTabControl_SelectionChanged">
+                    <TabItem ToolTip="홈"
+                             Tag="HomePage"
+                             Style="{StaticResource MaterialDesignNavigationRailTabItem}">
+                        <TabItem.Header>
+                            <materialDesign:PackIcon Kind="Home"
+                                                     Width="32"
+                                                     Height="32" />
+                        </TabItem.Header>
+                        <Frame Source="/View/HomePage.xaml" />
+                    </TabItem>
+                    <TabItem ToolTip="컴퓨터 설정"
+                             Tag="ComputerSettingPage"
+                             Style="{StaticResource MaterialDesignNavigationRailTabItem}">
+                        <TabItem.Header>
+                            <materialDesign:PackIcon Kind="MonitorEdit"
+                                                     Width="32"
+                                                     Height="32" />
+                        </TabItem.Header>
+                        <Frame Source="/View/ComputerSettingPage.xaml" />
+                    </TabItem>
+                    <TabItem ToolTip="실행파일 배포"
+                             Tag="DistributionPage"
+                             Style="{StaticResource MaterialDesignNavigationRailTabItem}">
+                        <TabItem.Header>
+                            <materialDesign:PackIcon Kind="CubeSend"
+                                                     Width="32"
+                                                     Height="32" />
+                        </TabItem.Header>
+                    </TabItem>
+                </TabControl>
+            </Grid>
+        </Border>
+    </DockPanel>
 </Window>

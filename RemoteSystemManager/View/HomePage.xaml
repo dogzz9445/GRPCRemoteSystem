@@ -10,6 +10,7 @@
       mc:Ignorable="d"
       d:DesignHeight="1000"
       d:DesignWidth="1600"
+      Background="#08FFFFFF"
       Title="HomePage">
     
     <Page.Resources>
@@ -26,7 +27,7 @@
         <Style TargetType="TextBlock"
                x:Key="DarkStyle">
             <Setter Property="Foreground"
-                    Value="#242424" />
+                    Value="#FFFFFF" />
             <Setter Property="Margin"
                     Value="8" />
             <Setter Property="VerticalAlignment"
@@ -98,6 +99,7 @@
         <TextBlock Grid.Row="0"
                    Margin="16"
                    FontWeight="SemiBold"
+                   Foreground="White"
                    Style="{StaticResource MaterialDesignHeadline5TextBlock}"
                    Text="컴퓨터 관리"/>
         <Grid Grid.Row="1"
@@ -119,7 +121,8 @@
                 </Grid.RowDefinitions>
 
                 <Border Grid.Row="0"
-                        Style="{DynamicResource ContentPanel}">
+                        Style="{DynamicResource ContentPanel}"
+                        Background="#08FFFFFF">
                     <StackPanel>
                         <Grid Margin="8">
                             <Grid.ColumnDefinitions>

@@ -22,6 +22,12 @@
                     Value="#24888888" />
         </Style>
 
+        <Style TargetType="TextBlock"
+               x:Key="ThemeTextBlock">
+            <Setter Property="Foreground"
+                    Value="White"/>
+        </Style>
+
         <!-- 데이터 템플릿 -->
         <DataTemplate x:Key="ProgramEditListDataTemplate"
                       DataType="{x:Type model:Program}">
@@ -82,6 +88,7 @@
             <TextBlock Grid.Column="0"
                        Margin="16"
                        FontWeight="SemiBold"
+                       Foreground="White"
                        Style="{StaticResource MaterialDesignHeadline5TextBlock}"
                        Text="컴퓨터 및 프로그램 추가 편집 관리" />
             <Button Grid.Column="1"
@@ -201,6 +208,7 @@
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Column="0"
                                FontWeight="SemiBold"
+                               Foreground="White"
                                Margin="16, 16, 0, 16"
                                Style="{StaticResource MaterialDesignHeadline5TextBlock}"
                                Text="컴퓨터이름:" />
