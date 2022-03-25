@@ -215,11 +215,13 @@
                     <TextBlock Grid.Column="1"
                                Margin="16"
                                FontWeight="SemiBold"
+                               Foreground="White"
                                Style="{StaticResource MaterialDesignHeadline5TextBlock}"
                                Text="{Binding SelectedEditingComputer.ComputerName}" />
                 </Grid>
                 <Border Grid.Row="2"
-                        Style="{DynamicResource ContentPanel}">
+                        Style="{DynamicResource ContentPanel}"
+                        CornerRadius="8">
 
                     <ListView ItemsSource="{Binding SelectedEditingComputer.Programs}"
                               ItemTemplate="{DynamicResource ProgramEditListDataTemplate}"

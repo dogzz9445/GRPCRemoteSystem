@@ -663,7 +663,7 @@ namespace RemoteSystemManager.ViewModel
                     FileName = program.ProgramPath,
                     ProcessName = program.ProgramProcessName
                 };
-                Channel channel = new Channel(computer.ComputerIp + ":5001", ChannelCredentials.Insecure);
+                Channel channel = new Channel(computer.ComputerIp + ":6804", ChannelCredentials.Insecure);
                 var client = new Remote.RemoteClient(channel);
                 var reply = await client.PostProgramControlMessageAsync(programControl);
                 await channel.ShutdownAsync();
@@ -685,7 +685,7 @@ namespace RemoteSystemManager.ViewModel
                     FileName = program.ProgramPath,
                     ProcessName = program.ProgramProcessName
                 };
-                Channel channel = new Channel(computer.ComputerIp + ":5001", ChannelCredentials.Insecure);
+                Channel channel = new Channel(computer.ComputerIp + ":6804", ChannelCredentials.Insecure);
                 var client = new Remote.RemoteClient(channel);
                 var reply = await client.PostProgramControlMessageAsync(programControl);
                 await channel.ShutdownAsync();
@@ -714,7 +714,7 @@ namespace RemoteSystemManager.ViewModel
                 {
                     Control = ComputerControl.Types.ComputerControlType.Restart
                 };
-                Channel channel = new Channel(computer.ComputerIp + ":5001", ChannelCredentials.Insecure);
+                Channel channel = new Channel(computer.ComputerIp + ":6804", ChannelCredentials.Insecure);
                 var client = new Remote.RemoteClient(channel);
                 var reply = await client.PostComputerControlMessageAsync(computerControl);
                 await channel.ShutdownAsync();
@@ -734,7 +734,7 @@ namespace RemoteSystemManager.ViewModel
                 {
                     Control = ComputerControl.Types.ComputerControlType.Stop
                 };
-                Channel channel = new Channel(computer.ComputerIp + ":5001", ChannelCredentials.Insecure);
+                Channel channel = new Channel(computer.ComputerIp + ":6804", ChannelCredentials.Insecure);
                 var client = new Remote.RemoteClient(channel);
                 var reply = await client.PostComputerControlMessageAsync(computerControl);
                 await channel.ShutdownAsync();
