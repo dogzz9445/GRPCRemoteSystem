@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Threading.Tasks;
@@ -79,11 +80,15 @@ namespace RemoteSystemServer
             }
             else if (request.Control == ProgramControl.Types.ProgramControlType.Stop)
             {
-                foreach (Process process in Process.GetProcesses())
+                if (!string.IsNullOrEmpty(request.ProcessName))
                 {
-                    if (process.ProcessName.StartsWith(request.ProcessName))
+                    string processName = Path.GetFileName(request.ProcessName).Split('.')[0];
+                    foreach (Process process in Process.GetProcesses())
                     {
-                        process.Kill();
+                        if (process.ProcessName.StartsWith(processName))
+                        {
+                            process.Kill();
+                        }
                     }
                 }
             }

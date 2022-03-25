@@ -24,6 +24,10 @@ namespace RemoteSystemManager.ViewModel
     {
         #region 싱글톤 구현
 
+        // TODO: 설정으로 고치기
+        private const string SERVER_INSECURE_PORT = "5000";
+        private const string SERVER_SECURE_PORT = "5001";
+
         private static ComputerViewModel _instance;
 
         public static ComputerViewModel Instance
@@ -652,7 +656,7 @@ namespace RemoteSystemManager.ViewModel
 
         #region 통신 / 컴퓨터 시작,재시작,종료, 프로그램 시작,종료
 
-        private async Task SendRunProgram(Computer computer, Program program)
+        public async Task SendRunProgram(Computer computer, Program program)
         {
             try
             {
@@ -663,7 +667,7 @@ namespace RemoteSystemManager.ViewModel
                     FileName = program.ProgramPath,
                     ProcessName = program.ProgramProcessName
                 };
-                Channel channel = new Channel(computer.ComputerIp + ":6804", ChannelCredentials.Insecure);
+                Channel channel = new Channel($"{computer.ComputerIp}:{SERVER_INSECURE_PORT}", ChannelCredentials.Insecure);
                 var client = new Remote.RemoteClient(channel);
                 var reply = await client.PostProgramControlMessageAsync(programControl);
                 await channel.ShutdownAsync();
@@ -674,7 +678,7 @@ namespace RemoteSystemManager.ViewModel
             }
         }
 
-        private async Task SendKillProgram(Computer computer, Program program)
+        public async Task SendKillProgram(Computer computer, Program program)
         {
             try
             {
@@ -685,7 +689,7 @@ namespace RemoteSystemManager.ViewModel
                     FileName = program.ProgramPath,
                     ProcessName = program.ProgramProcessName
                 };
-                Channel channel = new Channel(computer.ComputerIp + ":6804", ChannelCredentials.Insecure);
+                Channel channel = new Channel($"{computer.ComputerIp}:{SERVER_INSECURE_PORT}", ChannelCredentials.Insecure);
                 var client = new Remote.RemoteClient(channel);
                 var reply = await client.PostProgramControlMessageAsync(programControl);
                 await channel.ShutdownAsync();
@@ -714,7 +718,7 @@ namespace RemoteSystemManager.ViewModel
                 {
                     Control = ComputerControl.Types.ComputerControlType.Restart
                 };
-                Channel channel = new Channel(computer.ComputerIp + ":6804", ChannelCredentials.Insecure);
+                Channel channel = new Channel($"{computer.ComputerIp}:{SERVER_INSECURE_PORT}", ChannelCredentials.Insecure);
                 var client = new Remote.RemoteClient(channel);
                 var reply = await client.PostComputerControlMessageAsync(computerControl);
                 await channel.ShutdownAsync();
@@ -734,7 +738,7 @@ namespace RemoteSystemManager.ViewModel
                 {
                     Control = ComputerControl.Types.ComputerControlType.Stop
                 };
-                Channel channel = new Channel(computer.ComputerIp + ":6804", ChannelCredentials.Insecure);
+                Channel channel = new Channel($"{computer.ComputerIp}:{SERVER_INSECURE_PORT}", ChannelCredentials.Insecure);
                 var client = new Remote.RemoteClient(channel);
                 var reply = await client.PostComputerControlMessageAsync(computerControl);
                 await channel.ShutdownAsync();
