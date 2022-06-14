@@ -13,10 +13,17 @@ namespace RemoteSystemServer
 {
     public class RemoteService : Remote.RemoteBase
     {
+        private readonly ADBForwarder _adbForwarder;
+
         private readonly ILogger<RemoteService> _logger;
         public RemoteService(ILogger<RemoteService> logger)
         {
             _logger = logger;
+
+            _adbForwarder = new ADBForwarder();
+            _adbForwarder.Initialize();
+
+            MobileHotSpot.Start();
         }
 
         public override Task<HeartBeat> GetHeartBeat(Empty request, ServerCallContext context)
@@ -24,7 +31,7 @@ namespace RemoteSystemServer
             return Task.FromResult(new HeartBeat
             {
                 Timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
-                Message = "Hello "
+                Message = "Hello"
             });
         }
 
@@ -90,7 +97,33 @@ namespace RemoteSystemServer
             return Task.FromResult(new MessageResult
             {
                 Result = MessageResult.Types.MessageResultType.Success,
-                ResultMessage = "suc"
+                ResultMessage = "Success"
+            });
+        }
+
+        public override Task<MessageResult> PostVRControlMessage(VRControl request, ServerCallContext context)
+        {
+            if (request.Control == VRControl.Types.VRControlType.AlvrClientStart)
+            {
+                _adbForwarder.StartALVRClient();
+            }
+            else if (request.Control == VRControl.Types.VRControlType.AlvrClientStop)
+            {
+                _adbForwarder.ForceStopALVRClient();
+            }
+            else if (request.Control == VRControl.Types.VRControlType.MobileHotspotStart)
+            {
+                MobileHotSpot.Start();
+            }
+            else if (request.Control == VRControl.Types.VRControlType.MobileHotspotStop)
+            {
+                MobileHotSpot.Stop();
+            }
+
+            return Task.FromResult(new MessageResult
+            {
+                Result = MessageResult.Types.MessageResultType.Success,
+                ResultMessage = "Success"
             });
         }
     }

@@ -310,19 +310,47 @@
                         </DataGrid.Resources>
                         <DataGrid.ContextMenu>
                             <ContextMenu Padding="0">
-                                <MenuItem Header="컴퓨터 시작">
+                                <MenuItem Header="컴퓨터 시작"
+                                          Command="{Binding StartSingleComputerCommand}">
                                     <MenuItem.Icon>
                                         <materialDesign:PackIcon Kind="PlayBoxMultiple" />
                                     </MenuItem.Icon>
                                 </MenuItem>
-                                <MenuItem Header="컴퓨터 재시작">
+                                <MenuItem Header="컴퓨터 재시작"
+                                          Command="{Binding RestartSingleComputerCommand}">
                                     <MenuItem.Icon>
                                         <materialDesign:PackIcon Kind="Restart" />
                                     </MenuItem.Icon>
                                 </MenuItem>
-                                <MenuItem Header="컴퓨터 종료">
+                                <MenuItem Header="컴퓨터 종료"
+                                          Command="{Binding ShutdownSingleComputerCommand}">
                                     <MenuItem.Icon>
                                         <materialDesign:PackIcon Kind="CloseOctagon" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <Separator />
+                                <MenuItem Header="ALVR 시작"
+                                          Command="{Binding StartALVRSelectedComputerCommand}">
+                                    <MenuItem.Icon>
+                                        <materialDesign:PackIcon Kind="AccessPoint" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="ALVR 종료"
+                                          Command="{Binding StopALVRSelectedComputerCommand}">
+                                    <MenuItem.Icon>
+                                        <materialDesign:PackIcon Kind="AccessPointCheck" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="Mobile HotSpot 시작"
+                                          Command="{Binding StartMobileHotSpotSelectedComputerCommand}">
+                                    <MenuItem.Icon>
+                                        <materialDesign:PackIcon Kind="AccessPoint" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="Mobile HotSpot 종료"
+                                          Command="{Binding StopMobileHotSpotSelectedComputerCommand}">
+                                    <MenuItem.Icon>
+                                        <materialDesign:PackIcon Kind="AccessPointCheck" />
                                     </MenuItem.Icon>
                                 </MenuItem>
                             </ContextMenu>

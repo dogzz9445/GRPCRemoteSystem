@@ -245,9 +245,15 @@ namespace RemoteSystemManager.ViewModel
         private DelegateCommand _startAllComputersCommand;
         private DelegateCommand _restartAllComputersCommand;
         private DelegateCommand _shutdownAllComputersCommand;
+
         private DelegateCommand _startSingleComputerCommand;
         private DelegateCommand _restartSingleComputerCommand;
         private DelegateCommand _shutdownSingleComputerCommand;
+        private DelegateCommand _startAVLRSingleComputerCommand;
+        private DelegateCommand _stopAVLRSingleComputerCommand;
+        private DelegateCommand _startMobileHotSpotSingleComputerCommand;
+        private DelegateCommand _stopMobileHotSpotSingleComputerCommand;
+
         private DelegateCommand _startMultipleComputersCommand;
         private DelegateCommand _restartMultipleComputersCommand;
         private DelegateCommand _shutdownMultipleComputersCommand;
@@ -433,6 +439,51 @@ namespace RemoteSystemManager.ViewModel
                     if (SelectedViewComputer != null)
                     {
                         Task.Factory.StartNew(async () => await SendShutdownComputer(SelectedViewComputer));
+                    }
+                });
+
+
+        // TODO:
+        public DelegateCommand StartALVRSelectedComputerCommand =>
+            _startAVLRSingleComputerCommand ??= new DelegateCommand(
+                () =>
+                {
+                    if (SelectedViewComputer != null)
+                    {
+                        SendVRControlComputer(SelectedViewComputer, VRControl.Types.VRControlType.AlvrClientStart);
+                    }
+                });
+
+        // TODO:
+        public DelegateCommand StopALVRSelectedComputerCommand =>
+            _stopAVLRSingleComputerCommand ??= new DelegateCommand(
+                () =>
+                {
+                    if (SelectedViewComputer != null)
+                    {
+                        SendVRControlComputer(SelectedViewComputer, VRControl.Types.VRControlType.AlvrClientStop);
+                    }
+                });
+
+        // TODO:
+        public DelegateCommand StartMobileHotSpotSelectedComputerCommand =>
+             _startMobileHotSpotSingleComputerCommand ??= new DelegateCommand(
+                () =>
+                {
+                    if (SelectedViewComputer != null)
+                    {
+                        SendVRControlComputer(SelectedViewComputer, VRControl.Types.VRControlType.MobileHotspotStart);
+                    }
+                });
+
+        // TODO:
+        public DelegateCommand StopMobileHotSpotSelectedComputerCommand =>
+             _stopMobileHotSpotSingleComputerCommand ??= new DelegateCommand(
+                () =>
+                {
+                    if (SelectedViewComputer != null)
+                    {
+                        SendVRControlComputer(SelectedViewComputer, VRControl.Types.VRControlType.MobileHotspotStop);
                     }
                 });
 
@@ -737,6 +788,25 @@ namespace RemoteSystemManager.ViewModel
                 Channel channel = new Channel(computer.ComputerIp + ":5001", ChannelCredentials.Insecure);
                 var client = new Remote.RemoteClient(channel);
                 var reply = await client.PostComputerControlMessageAsync(computerControl);
+                await channel.ShutdownAsync();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
+
+        private async void SendVRControlComputer(Computer computer, VRControl.Types.VRControlType type)
+        {
+            try
+            {
+                VRControl vrControl = new VRControl()
+                {
+                    Control = type
+                };
+                Channel channel = new Channel(computer.ComputerIp + ":5001", ChannelCredentials.Insecure);
+                var client = new Remote.RemoteClient(channel);
+                var reply = await client.PostVRControlMessageAsync(vrControl);
                 await channel.ShutdownAsync();
             }
             catch (Exception e)
