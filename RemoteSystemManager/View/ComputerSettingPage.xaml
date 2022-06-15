@@ -215,6 +215,7 @@
                     <TextBlock Grid.Column="1"
                                Margin="16"
                                FontWeight="SemiBold"
+                               Foreground="White"
                                Style="{StaticResource MaterialDesignHeadline5TextBlock}"
                                Text="{Binding SelectedEditingComputer.ComputerName}" />
                 </Grid>
