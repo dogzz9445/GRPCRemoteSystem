@@ -404,30 +404,38 @@
             <!--프로그램 관리-->
             <Border Grid.Column="4"
                     Style="{DynamicResource ContentPanel}">
-                <Grid>
-                    <ListView ItemTemplate="{DynamicResource ProgramViewListDataTemplate}"
-                              ItemsSource="{Binding SelectedViewComputer.Programs}"
-                              SelectedItem="{Binding SelectedControlProgram, Mode=TwoWay}">
-                        <ListView.ContextMenu>
-                            <ContextMenu Padding="0">
-                                <MenuItem Header="프로그램 시작"
-                                          Command="{Binding RunSingleProgramCommand}"
-                                          CommandParameter="{Binding SelectedControlProgram}">
-                                    <MenuItem.Icon>
-                                        <materialDesign:PackIcon Kind="PlayBoxMultiple" />
-                                    </MenuItem.Icon>
-                                </MenuItem>
-                                <MenuItem Header="프로그램 종료"
-                                          Command="{Binding KillSingleProgramCommand}"
-                                          CommandParameter="{Binding SelectedControlProgram}">
-                                    <MenuItem.Icon>
-                                        <materialDesign:PackIcon Kind="CloseOctagon" />
-                                    </MenuItem.Icon>
-                                </MenuItem>
-                            </ContextMenu>
-                        </ListView.ContextMenu>
-                    </ListView>
-                </Grid>
+                <StackPanel>
+                    <TextBlock Text="프로그램 관리"
+                           Margin="16"
+                           FontWeight="SemiBold"
+                           Foreground="White"
+                               Style="{StaticResource MaterialDesignHeadline6TextBlock}" />
+                    <Border Grid.Column="4"
+                            Style="{DynamicResource ContentPanel}">
+                        <ListView ItemTemplate="{DynamicResource ProgramViewListDataTemplate}"
+                                  ItemsSource="{Binding SelectedViewComputer.Programs}"
+                                  SelectedItem="{Binding SelectedControlProgram, Mode=TwoWay}">
+                            <ListView.ContextMenu>
+                                <ContextMenu Padding="0">
+                                    <MenuItem Header="프로그램 시작"
+                                              Command="{Binding RunSingleProgramCommand}"
+                                              CommandParameter="{Binding SelectedControlProgram}">
+                                        <MenuItem.Icon>
+                                            <materialDesign:PackIcon Kind="PlayBoxMultiple" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Header="프로그램 종료"
+                                              Command="{Binding KillSingleProgramCommand}"
+                                              CommandParameter="{Binding SelectedControlProgram}">
+                                        <MenuItem.Icon>
+                                            <materialDesign:PackIcon Kind="CloseOctagon" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                </ContextMenu>
+                            </ListView.ContextMenu>
+                        </ListView>
+                    </Border>
+                </StackPanel>
             </Border>
 
             <Border Grid.Column="1"

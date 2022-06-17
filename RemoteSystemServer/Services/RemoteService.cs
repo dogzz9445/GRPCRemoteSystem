@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.NetworkInformation;
@@ -13,18 +12,32 @@ namespace RemoteSystemServer
 {
     public class RemoteService : Remote.RemoteBase
     {
-        private readonly ADBForwarder _adbForwarder;
+        private ADBForwarder _adbForwarder;
 
         private readonly ILogger<RemoteService> _logger;
         public RemoteService(ILogger<RemoteService> logger)
         {
             _logger = logger;
 
-            _adbForwarder = new ADBForwarder();
-            _adbForwarder.Initialize();
+            //_logger.Log(LogLevel.Information, "Start RemoteService");
 
-            MobileHotSpot.Start();
+            //_adbForwarder = new ADBForwarder();
+            //_adbForwarder.Initialize();
+
+            //MobileHotSpot.Start();
         }
+
+        //public RemoteService(ILoggerFactory logger)
+        //{
+        //    _logger = logger.CreateLogger<RemoteService>();
+
+        //    _logger.Log(LogLevel.Information, "Start RemoteService");
+
+        //    _adbForwarder = new ADBForwarder();
+        //    _adbForwarder.Initialize();
+
+        //    MobileHotSpot.Start();
+        //}
 
         public override Task<HeartBeat> GetHeartBeat(Empty request, ServerCallContext context)
         {
@@ -105,11 +118,19 @@ namespace RemoteSystemServer
         {
             if (request.Control == VRControl.Types.VRControlType.AlvrClientStart)
             {
+                if (_adbForwarder == null)
+                {
+                    _adbForwarder = new ADBForwarder();
+                    _adbForwarder.Initialize();
+                }
                 _adbForwarder.StartALVRClient();
             }
             else if (request.Control == VRControl.Types.VRControlType.AlvrClientStop)
             {
-                _adbForwarder.ForceStopALVRClient();
+                if (_adbForwarder != null)
+                {
+                    _adbForwarder.ForceStopALVRClient();
+                }
             }
             else if (request.Control == VRControl.Types.VRControlType.MobileHotspotStart)
             {
