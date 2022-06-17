@@ -31,8 +31,7 @@ namespace RemoteSystemServer
                             listenOptions.Protocols = HttpProtocols.Http2;
                             listenOptions.UseHttps();
                         });
-                    });
-                    webBuilder.UseStartup<Startup>();
+                    }).UseKestrel().UseStartup<Startup>();
                 });
     }
 }
