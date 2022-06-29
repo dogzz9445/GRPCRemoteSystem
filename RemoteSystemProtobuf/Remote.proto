@@ -34,8 +34,8 @@ message VRControl {
 	enum VRControlType {
 		ALVR_CLIENT_START = 0;
 		ALVR_CLIENT_STOP = 1;
-		MOBILE_HOTSPOT_START = 2;
-		MOBILE_HOTSPOT_STOP = 3;
+		ALVR_SERVER_START = 2;
+		ALVR_SERVER_STOP = 3;
 	}
 	VRControlType control = 1;
 }
@@ -43,9 +43,11 @@ message VRControl {
 message ComputerControl
 {
 	enum ComputerControlType {
-		START = 0;
-		RESTART = 1;
-		STOP = 2;
+		COMPUTER_START = 0;
+		COMPUTER_RESTART = 1;
+		COMPUTER_STOP = 2;
+		MOBILE_HOTSPOT_START = 3;
+		MOBILE_HOTSPOT_STOP = 4;
 	}
 	ComputerControlType control = 1;
 }

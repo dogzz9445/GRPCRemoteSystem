@@ -391,7 +391,7 @@ namespace RemoteSystemManager.ViewModel
                 {
                     foreach (var computer in Computers)
                     {
-                        SendComputerControl(computer, ComputerControl.Types.ComputerControlType.Start);
+                        SendComputerControl(computer, ComputerControl.Types.ComputerControlType.ComputerStart);
                     }
                 });
 
@@ -401,7 +401,7 @@ namespace RemoteSystemManager.ViewModel
                 {
                     foreach (var computer in Computers)
                     {
-                        SendComputerControl(computer, ComputerControl.Types.ComputerControlType.Restart);
+                        SendComputerControl(computer, ComputerControl.Types.ComputerControlType.ComputerRestart);
                     }
                 });
 
@@ -411,7 +411,7 @@ namespace RemoteSystemManager.ViewModel
                 {
                     foreach (var computer in Computers)
                     {
-                        SendComputerControl(computer, ComputerControl.Types.ComputerControlType.Stop);
+                        SendComputerControl(computer, ComputerControl.Types.ComputerControlType.ComputerStop);
                     }
                 });
 
@@ -421,7 +421,7 @@ namespace RemoteSystemManager.ViewModel
                 {
                     if (SelectedViewComputer != null)
                     {
-                        SendComputerControl(SelectedViewComputer, ComputerControl.Types.ComputerControlType.Start);
+                        SendComputerControl(SelectedViewComputer, ComputerControl.Types.ComputerControlType.ComputerStart);
                     }
                 });
 
@@ -431,7 +431,7 @@ namespace RemoteSystemManager.ViewModel
                 {
                     if (SelectedViewComputer != null)
                     {
-                        SendComputerControl(SelectedViewComputer, ComputerControl.Types.ComputerControlType.Restart);
+                        SendComputerControl(SelectedViewComputer, ComputerControl.Types.ComputerControlType.ComputerRestart);
                     }
                 });
 
@@ -441,7 +441,7 @@ namespace RemoteSystemManager.ViewModel
                 {
                     if (SelectedViewComputer != null)
                     {
-                        SendComputerControl(SelectedViewComputer, ComputerControl.Types.ComputerControlType.Stop);
+                        SendComputerControl(SelectedViewComputer, ComputerControl.Types.ComputerControlType.ComputerStop);
                     }
                 });
 
@@ -476,7 +476,7 @@ namespace RemoteSystemManager.ViewModel
                     {
                         return;
                     }
-                    SendVRControl(SelectedViewComputer, VRControl.Types.VRControlType.MobileHotspotStart);
+                    SendComputerControl(SelectedViewComputer, ComputerControl.Types.ComputerControlType.MobileHotspotStart);
                 });
 
         public DelegateCommand StopMobileHotSpotSelectedComputerCommand =>
@@ -487,7 +487,7 @@ namespace RemoteSystemManager.ViewModel
                     {
                         return;
                     }
-                    SendVRControl(SelectedViewComputer, VRControl.Types.VRControlType.MobileHotspotStop);
+                    SendComputerControl(SelectedViewComputer, ComputerControl.Types.ComputerControlType.MobileHotspotStop);
                 });
 
         public DelegateCommand StartMultipleComputersCommand =>
@@ -498,7 +498,7 @@ namespace RemoteSystemManager.ViewModel
                     {
                         if (computer.IsSelected)
                         {
-                            SendComputerControl(computer, ComputerControl.Types.ComputerControlType.Start);
+                            SendComputerControl(computer, ComputerControl.Types.ComputerControlType.ComputerStart);
                         }
                     }
                 });
@@ -511,7 +511,7 @@ namespace RemoteSystemManager.ViewModel
                     {
                         if (computer.IsSelected)
                         {
-                            SendComputerControl(computer, ComputerControl.Types.ComputerControlType.Restart);
+                            SendComputerControl(computer, ComputerControl.Types.ComputerControlType.ComputerRestart);
                         }
                     }
                 });
@@ -524,7 +524,7 @@ namespace RemoteSystemManager.ViewModel
                     {
                         if (computer.IsSelected)
                         {
-                            SendComputerControl(computer, ComputerControl.Types.ComputerControlType.Stop);
+                            SendComputerControl(computer, ComputerControl.Types.ComputerControlType.ComputerStop);
                         }
                     }
                 });
