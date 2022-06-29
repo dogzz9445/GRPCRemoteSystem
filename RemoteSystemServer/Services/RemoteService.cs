@@ -18,6 +18,8 @@ namespace RemoteSystemServer
         public RemoteService(ILogger<RemoteService> logger)
         {
             _logger = logger;
+            _logger.Log(LogLevel.Information, "Log");
+            Console.WriteLine("Helllo");
         }
 
         public override Task<HeartBeat> GetHeartBeat(Empty request, ServerCallContext context)
