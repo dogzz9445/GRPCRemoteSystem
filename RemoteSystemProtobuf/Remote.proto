@@ -12,6 +12,7 @@ service Remote
 	rpc GetPerformance (google.protobuf.Empty) returns (Performance);
 	rpc PostComputerControlMessage (ComputerControl) returns (google.protobuf.Empty);
 	rpc PostProgramControlMessage (ProgramControl) returns (MessageResult);
+	rpc PostVRControlMessage (VRControl) returns (MessageResult);
 }
 
 message MessageMacAddress
@@ -29,6 +30,16 @@ message MessageResult
 	string resultMessage = 2;
 }
 
+message VRControl {
+	enum VRControlType {
+		ALVR_CLIENT_START = 0;
+		ALVR_CLIENT_STOP = 1;
+		MOBILE_HOTSPOT_START = 2;
+		MOBILE_HOTSPOT_STOP = 3;
+	}
+	VRControlType control = 1;
+}
+
 message ComputerControl
 {
 	enum ComputerControlType {
@@ -41,14 +52,13 @@ message ComputerControl
 
 message ProgramControl
 {
-	string name = 1;
-	string fileName = 2;
-	string processName = 3;
-	
 	enum ProgramControlType {
 		START = 0;
 		STOP = 1;
 	}
+	string name = 1;
+	string fileName = 2;
+	string processName = 3;
 	ProgramControlType control = 4;
 }
 

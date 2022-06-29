@@ -1,10 +1,12 @@
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 
 namespace RemoteSystemServer
 {
@@ -22,7 +24,14 @@ namespace RemoteSystemServer
                 .UseWindowsService()
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>();
+                    webBuilder.ConfigureKestrel(options =>
+                    {
+                        options.Listen(IPAddress.Any, 9621, listenOptions =>
+                        {
+                            listenOptions.Protocols = HttpProtocols.Http2;
+                            listenOptions.UseHttps();
+                        });
+                    }).UseKestrel().UseStartup<Startup>();
                 });
     }
 }

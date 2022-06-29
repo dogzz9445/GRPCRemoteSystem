@@ -17,16 +17,14 @@ using Grpc.Core;
 using RemoteSystem.Remote;
 using Application = System.Windows.Application;
 using Timer = System.Timers.Timer;
+using Grpc.Net.Client;
+using System.Net.Http;
 
 namespace RemoteSystemManager.ViewModel
 {
     public class ComputerViewModel : BindableBase
     {
         #region 싱글톤 구현
-
-        // TODO: 설정으로 고치기
-        private const string SERVER_INSECURE_PORT = "5000";
-        private const string SERVER_SECURE_PORT = "5001";
 
         private static ComputerViewModel _instance;
 
@@ -69,6 +67,7 @@ namespace RemoteSystemManager.ViewModel
             await Application.Current.Dispatcher.InvokeAsync(handler);
 
         private const string ComputersConfigFileName = "data/computers.json";
+        private const int GRPC_SERVER_PORT = 9621;
 
         private ItemObservableCollection<Computer> _computers;
         private ItemObservableCollection<Program> _listManagedPrograms;
@@ -249,9 +248,15 @@ namespace RemoteSystemManager.ViewModel
         private DelegateCommand _startAllComputersCommand;
         private DelegateCommand _restartAllComputersCommand;
         private DelegateCommand _shutdownAllComputersCommand;
+
         private DelegateCommand _startSingleComputerCommand;
         private DelegateCommand _restartSingleComputerCommand;
         private DelegateCommand _shutdownSingleComputerCommand;
+        private DelegateCommand _startAVLRSingleComputerCommand;
+        private DelegateCommand _stopAVLRSingleComputerCommand;
+        private DelegateCommand _startMobileHotSpotSingleComputerCommand;
+        private DelegateCommand _stopMobileHotSpotSingleComputerCommand;
+
         private DelegateCommand _startMultipleComputersCommand;
         private DelegateCommand _restartMultipleComputersCommand;
         private DelegateCommand _shutdownMultipleComputersCommand;
@@ -272,7 +277,7 @@ namespace RemoteSystemManager.ViewModel
                     {
                         foreach (var program in computer.Programs)
                         {
-                            Task.Factory.StartNew(async () => await SendRunProgram(computer, program));
+                            SendProgramControl(computer, program, ProgramControl.Types.ProgramControlType.Start);
                         }
                     }
                 });
@@ -285,7 +290,7 @@ namespace RemoteSystemManager.ViewModel
                     {
                         foreach (var program in computer.Programs)
                         {
-                            Task.Factory.StartNew(async () => await SendKillProgram(computer, program));
+                            SendProgramControl(computer, program, ProgramControl.Types.ProgramControlType.Stop);
                         }
                     }
                 });
@@ -300,7 +305,7 @@ namespace RemoteSystemManager.ViewModel
                         {
                             if (program.ProgramName == SelectedViewProgramName)
                             {
-                                Task.Factory.StartNew(async () => await SendRunProgram(computer, program));
+                                SendProgramControl(computer, program, ProgramControl.Types.ProgramControlType.Start);
                             }
                         }
                     }
@@ -316,7 +321,7 @@ namespace RemoteSystemManager.ViewModel
                         {
                             if (program.ProgramName == SelectedViewProgramName)
                             {
-                                Task.Factory.StartNew(async () => await SendKillProgram(computer, program));
+                                SendProgramControl(computer, program, ProgramControl.Types.ProgramControlType.Stop);
                             }
                         }
                     }
@@ -330,7 +335,7 @@ namespace RemoteSystemManager.ViewModel
                     {
                         if (computer.ComputerName == program.ComputerName)
                         {
-                            Task.Factory.StartNew(async () => await SendRunProgram(computer, program));
+                            SendProgramControl(computer, program, ProgramControl.Types.ProgramControlType.Start);
                         }
                     }
                 });
@@ -343,7 +348,7 @@ namespace RemoteSystemManager.ViewModel
                     {
                         if (computer.ComputerName == program.ComputerName)
                         {
-                            Task.Factory.StartNew(async () => await SendKillProgram(computer, program));
+                            SendProgramControl(computer, program, ProgramControl.Types.ProgramControlType.Stop);
                         }
                     }
                 });
@@ -358,7 +363,7 @@ namespace RemoteSystemManager.ViewModel
                         {
                             if (program.IsSelected)
                             {
-                                Task.Factory.StartNew(async () => await SendRunProgram(computer, program));
+                                SendProgramControl(computer, program, ProgramControl.Types.ProgramControlType.Start);
                             }
                         }
                     }
@@ -374,7 +379,7 @@ namespace RemoteSystemManager.ViewModel
                         {
                             if (program.IsSelected)
                             {
-                                Task.Factory.StartNew(async () => await SendKillProgram(computer, program));
+                                SendProgramControl(computer, program, ProgramControl.Types.ProgramControlType.Stop);
                             }
                         }
                     }
@@ -386,7 +391,7 @@ namespace RemoteSystemManager.ViewModel
                 {
                     foreach (var computer in Computers)
                     {
-                        Task.Factory.StartNew(async () => await SendStartComputer(computer));
+                        SendComputerControl(computer, ComputerControl.Types.ComputerControlType.Start);
                     }
                 });
 
@@ -396,7 +401,7 @@ namespace RemoteSystemManager.ViewModel
                 {
                     foreach (var computer in Computers)
                     {
-                        Task.Factory.StartNew(async () => await SendRestartComputer(computer));
+                        SendComputerControl(computer, ComputerControl.Types.ComputerControlType.Restart);
                     }
                 });
 
@@ -406,7 +411,7 @@ namespace RemoteSystemManager.ViewModel
                 {
                     foreach (var computer in Computers)
                     {
-                        Task.Factory.StartNew(async () => await SendShutdownComputer(computer));
+                        SendComputerControl(computer, ComputerControl.Types.ComputerControlType.Stop);
                     }
                 });
 
@@ -416,7 +421,7 @@ namespace RemoteSystemManager.ViewModel
                 {
                     if (SelectedViewComputer != null)
                     {
-                        Task.Factory.StartNew(async () => await SendStartComputer(SelectedViewComputer));
+                        SendComputerControl(SelectedViewComputer, ComputerControl.Types.ComputerControlType.Start);
                     }
                 });
 
@@ -426,7 +431,7 @@ namespace RemoteSystemManager.ViewModel
                 {
                     if (SelectedViewComputer != null)
                     {
-                        Task.Factory.StartNew(async () => await SendRestartComputer(SelectedViewComputer));
+                        SendComputerControl(SelectedViewComputer, ComputerControl.Types.ComputerControlType.Restart);
                     }
                 });
 
@@ -436,8 +441,53 @@ namespace RemoteSystemManager.ViewModel
                 {
                     if (SelectedViewComputer != null)
                     {
-                        Task.Factory.StartNew(async () => await SendShutdownComputer(SelectedViewComputer));
+                        SendComputerControl(SelectedViewComputer, ComputerControl.Types.ComputerControlType.Stop);
                     }
+                });
+
+
+        public DelegateCommand StartALVRSelectedComputerCommand =>
+            _startAVLRSingleComputerCommand ??= new DelegateCommand(
+                () =>
+                {
+                    if (SelectedViewComputer == null)
+                    {
+                        return;
+                    }
+                    SendVRControl(SelectedViewComputer, VRControl.Types.VRControlType.AlvrClientStart);
+                });
+
+        public DelegateCommand StopALVRSelectedComputerCommand =>
+            _stopAVLRSingleComputerCommand ??= new DelegateCommand(
+                () =>
+                {
+                    if (SelectedViewComputer == null)
+                    {
+                        return;
+                    }
+                    SendVRControl(SelectedViewComputer, VRControl.Types.VRControlType.AlvrClientStop);
+                });
+
+        public DelegateCommand StartMobileHotSpotSelectedComputerCommand =>
+             _startMobileHotSpotSingleComputerCommand ??= new DelegateCommand(
+                () =>
+                {
+                    if (SelectedViewComputer == null)
+                    {
+                        return;
+                    }
+                    SendVRControl(SelectedViewComputer, VRControl.Types.VRControlType.MobileHotspotStart);
+                });
+
+        public DelegateCommand StopMobileHotSpotSelectedComputerCommand =>
+             _stopMobileHotSpotSingleComputerCommand ??= new DelegateCommand(
+                () =>
+                {
+                    if (SelectedViewComputer == null)
+                    {
+                        return;
+                    }
+                    SendVRControl(SelectedViewComputer, VRControl.Types.VRControlType.MobileHotspotStop);
                 });
 
         public DelegateCommand StartMultipleComputersCommand =>
@@ -448,7 +498,7 @@ namespace RemoteSystemManager.ViewModel
                     {
                         if (computer.IsSelected)
                         {
-                            Task.Factory.StartNew(async () => await SendStartComputer(computer));
+                            SendComputerControl(computer, ComputerControl.Types.ComputerControlType.Start);
                         }
                     }
                 });
@@ -461,7 +511,7 @@ namespace RemoteSystemManager.ViewModel
                     {
                         if (computer.IsSelected)
                         {
-                            Task.Factory.StartNew(async () => await SendRestartComputer(computer));
+                            SendComputerControl(computer, ComputerControl.Types.ComputerControlType.Restart);
                         }
                     }
                 });
@@ -474,7 +524,7 @@ namespace RemoteSystemManager.ViewModel
                     {
                         if (computer.IsSelected)
                         {
-                            Task.Factory.StartNew(async () => await SendShutdownComputer(computer));
+                            SendComputerControl(computer, ComputerControl.Types.ComputerControlType.Stop);
                         }
                     }
                 });
@@ -656,18 +706,27 @@ namespace RemoteSystemManager.ViewModel
 
         #region 통신 / 컴퓨터 시작,재시작,종료, 프로그램 시작,종료
 
-        public async Task SendRunProgram(Computer computer, Program program)
+        #region GRPC Settings
+        public GrpcChannel GetChannel(string ip)
+        {
+            var httpHandler = new HttpClientHandler();
+            httpHandler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+            return GrpcChannel.ForAddress($"https://{ip}:{GRPC_SERVER_PORT}", new GrpcChannelOptions { HttpHandler = httpHandler });
+        }
+        #endregion
+
+        private async void SendProgramControl(Computer computer, Program program, ProgramControl.Types.ProgramControlType type)
         {
             try
             {
                 ProgramControl programControl = new ProgramControl()
                 {
-                    Control = ProgramControl.Types.ProgramControlType.Start,
+                    Control = type,
                     Name = program.ProgramName,
                     FileName = program.ProgramPath,
                     ProcessName = program.ProgramProcessName
                 };
-                Channel channel = new Channel($"{computer.ComputerIp}:{SERVER_INSECURE_PORT}", ChannelCredentials.Insecure);
+                var channel = GetChannel(computer.ComputerIp);
                 var client = new Remote.RemoteClient(channel);
                 var reply = await client.PostProgramControlMessageAsync(programControl);
                 await channel.ShutdownAsync();
@@ -678,47 +737,15 @@ namespace RemoteSystemManager.ViewModel
             }
         }
 
-        public async Task SendKillProgram(Computer computer, Program program)
-        {
-            try
-            {
-                ProgramControl programControl = new ProgramControl()
-                {
-                    Control = ProgramControl.Types.ProgramControlType.Stop,
-                    Name = program.ProgramName,
-                    FileName = program.ProgramPath,
-                    ProcessName = program.ProgramProcessName
-                };
-                Channel channel = new Channel($"{computer.ComputerIp}:{SERVER_INSECURE_PORT}", ChannelCredentials.Insecure);
-                var client = new Remote.RemoteClient(channel);
-                var reply = await client.PostProgramControlMessageAsync(programControl);
-                await channel.ShutdownAsync();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-        }
-
-        private async Task SendStartComputer(Computer computer)
-        {
-            // TODO:
-            // if (ComputerMacAddress is validate)
-            await WakeOnLan.SendMagicPacketAsync(computer.ComputerMacAddress);
-
-            // TODO:
-            // Task<int>로 result값 받아서 화면에 띄워주기
-        }
-
-        private async Task SendRestartComputer(Computer computer)
+        private async void SendComputerControl(Computer computer, ComputerControl.Types.ComputerControlType type)
         {
             try
             {
                 ComputerControl computerControl = new ComputerControl()
                 {
-                    Control = ComputerControl.Types.ComputerControlType.Restart
+                    Control = type
                 };
-                Channel channel = new Channel($"{computer.ComputerIp}:{SERVER_INSECURE_PORT}", ChannelCredentials.Insecure);
+                var channel = GetChannel(computer.ComputerIp);
                 var client = new Remote.RemoteClient(channel);
                 var reply = await client.PostComputerControlMessageAsync(computerControl);
                 await channel.ShutdownAsync();
@@ -729,18 +756,17 @@ namespace RemoteSystemManager.ViewModel
             }
         }
 
-        private async Task SendShutdownComputer(Computer computer)
+        private async void SendVRControl(Computer computer, VRControl.Types.VRControlType type)
         {
-            await Task.Yield();
             try
             {
-                ComputerControl computerControl = new ComputerControl()
+                VRControl vrControl = new VRControl()
                 {
-                    Control = ComputerControl.Types.ComputerControlType.Stop
+                    Control = type
                 };
-                Channel channel = new Channel($"{computer.ComputerIp}:{SERVER_INSECURE_PORT}", ChannelCredentials.Insecure);
+                var channel = GetChannel(computer.ComputerIp);
                 var client = new Remote.RemoteClient(channel);
-                var reply = await client.PostComputerControlMessageAsync(computerControl);
+                var reply = await client.PostVRControlMessageAsync(vrControl);
                 await channel.ShutdownAsync();
             }
             catch (Exception e)
@@ -748,7 +774,6 @@ namespace RemoteSystemManager.ViewModel
                 Console.WriteLine(e);
             }
         }
-
         #endregion
 
         #region 타이머 및 통신 / 컴퓨터 상태 및 맥주소 받아오기

@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Threading.Tasks;
@@ -14,20 +12,39 @@ namespace RemoteSystemServer
 {
     public class RemoteService : Remote.RemoteBase
     {
+        private ADBForwarder _adbForwarder;
+
         private readonly ILogger<RemoteService> _logger;
         public RemoteService(ILogger<RemoteService> logger)
         {
             _logger = logger;
-            _logger.Log(LogLevel.Information, "Log");
-            Console.WriteLine("Helllo");
+
+            //_logger.Log(LogLevel.Information, "Start RemoteService");
+
+            //_adbForwarder = new ADBForwarder();
+            //_adbForwarder.Initialize();
+
+            //MobileHotSpot.Start();
         }
+
+        //public RemoteService(ILoggerFactory logger)
+        //{
+        //    _logger = logger.CreateLogger<RemoteService>();
+
+        //    _logger.Log(LogLevel.Information, "Start RemoteService");
+
+        //    _adbForwarder = new ADBForwarder();
+        //    _adbForwarder.Initialize();
+
+        //    MobileHotSpot.Start();
+        //}
 
         public override Task<HeartBeat> GetHeartBeat(Empty request, ServerCallContext context)
         {
             return Task.FromResult(new HeartBeat
             {
                 Timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
-                Message = "Hello "
+                Message = "Hello"
             });
         }
 
@@ -82,22 +99,52 @@ namespace RemoteSystemServer
             }
             else if (request.Control == ProgramControl.Types.ProgramControlType.Stop)
             {
-                if (!string.IsNullOrEmpty(request.ProcessName))
+                foreach (Process process in Process.GetProcesses())
                 {
-                    string processName = Path.GetFileName(request.ProcessName).Split('.')[0];
-                    foreach (Process process in Process.GetProcesses())
+                    if (process.ProcessName.StartsWith(request.ProcessName))
                     {
-                        if (process.ProcessName.StartsWith(processName))
-                        {
-                            process.Kill();
-                        }
+                        process.Kill();
                     }
                 }
             }
             return Task.FromResult(new MessageResult
             {
                 Result = MessageResult.Types.MessageResultType.Success,
-                ResultMessage = "suc"
+                ResultMessage = "Success"
+            });
+        }
+
+        public override Task<MessageResult> PostVRControlMessage(VRControl request, ServerCallContext context)
+        {
+            if (request.Control == VRControl.Types.VRControlType.AlvrClientStart)
+            {
+                if (_adbForwarder == null)
+                {
+                    _adbForwarder = new ADBForwarder();
+                    _adbForwarder.Initialize();
+                }
+                _adbForwarder.StartALVRClient();
+            }
+            else if (request.Control == VRControl.Types.VRControlType.AlvrClientStop)
+            {
+                if (_adbForwarder != null)
+                {
+                    _adbForwarder.ForceStopALVRClient();
+                }
+            }
+            else if (request.Control == VRControl.Types.VRControlType.MobileHotspotStart)
+            {
+                MobileHotSpot.Start();
+            }
+            else if (request.Control == VRControl.Types.VRControlType.MobileHotspotStop)
+            {
+                MobileHotSpot.Stop();
+            }
+
+            return Task.FromResult(new MessageResult
+            {
+                Result = MessageResult.Types.MessageResultType.Success,
+                ResultMessage = "Success"
             });
         }
     }
