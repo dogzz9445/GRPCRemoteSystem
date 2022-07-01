@@ -28,6 +28,9 @@ namespace RemoteSystemServer
                 app.UseDeveloperExceptionPage();
             }
 
+            RemoteService.AdbForwarder = new ADBForwarder();
+            RemoteService.AdbForwarder.Initialize();
+
             app.UseRouting();
 
             app.UseEndpoints(endpoints =>
