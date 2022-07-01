@@ -12,7 +12,8 @@ namespace RemoteSystemServer
 {
     public class RemoteService : Remote.RemoteBase
     {
-        private ADBForwarder _adbForwarder;
+        private static ADBForwarder _adbForwarder;
+        public static ADBForwarder AdbForwarder { get => _adbForwarder; set => _adbForwarder = value; }
 
         private readonly ILogger<RemoteService> _logger;
         public RemoteService(ILogger<RemoteService> logger)
@@ -21,11 +22,16 @@ namespace RemoteSystemServer
 
             //_logger.Log(LogLevel.Information, "Start RemoteService");
 
-            //_adbForwarder = new ADBForwarder();
-            //_adbForwarder.Initialize();
+            if (AdbForwarder == null)
+            {
+                AdbForwarder = new ADBForwarder();
+                AdbForwarder.Initialize();
+            }
+            MobileHotSpot.Start();
 
             //MobileHotSpot.Start();
         }
+
 
         //public RemoteService(ILoggerFactory logger)
         //{
@@ -55,7 +61,7 @@ namespace RemoteSystemServer
                     nic.OperationalStatus == OperationalStatus.Up &&
                     nic.NetworkInterfaceType != NetworkInterfaceType.Loopback)
                 .Select(nic => nic.GetPhysicalAddress().ToString()).FirstOrDefault();
-            
+
             return Task.FromResult(new MessageMacAddress
             {
                 MacAddress = macAddress
@@ -118,18 +124,18 @@ namespace RemoteSystemServer
         {
             if (request.Control == VRControl.Types.VRControlType.AlvrClientStart)
             {
-                if (_adbForwarder == null)
+                if (AdbForwarder == null)
                 {
-                    _adbForwarder = new ADBForwarder();
-                    _adbForwarder.Initialize();
+                    AdbForwarder = new ADBForwarder();
+                    AdbForwarder.Initialize();
                 }
-                _adbForwarder.StartALVRClient();
+                AdbForwarder.StartALVRClient();
             }
             else if (request.Control == VRControl.Types.VRControlType.AlvrClientStop)
             {
-                if (_adbForwarder != null)
+                if (AdbForwarder != null)
                 {
-                    _adbForwarder.ForceStopALVRClient();
+                    AdbForwarder.ForceStopALVRClient();
                 }
             }
             else if (request.Control == VRControl.Types.VRControlType.MobileHotspotStart)

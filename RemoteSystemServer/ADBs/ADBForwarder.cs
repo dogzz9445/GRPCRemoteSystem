@@ -99,6 +99,7 @@ namespace RemoteSystemServer
 
             Forward();
             StartALVRClient();
+
         }
 
         public void StartALVRClient()
@@ -110,7 +111,16 @@ namespace RemoteSystemServer
                 return;
             }
 
-            client.ExecuteRemoteCommand("am start -n alvr.client.quest/com.polygraphene.alvr.OvrActivity", DeviceData, outputReceiver);
+            while (true)
+            {
+                string command = Console.ReadLine();
+
+                client.ExecuteRemoteCommand(command, DeviceData, outputReceiver);
+
+                Thread.Sleep(100);
+            }
+
+            //client.ExecuteRemoteCommand("am start -n alvr.client.quest/com.polygraphene.alvr.OvrActivity", DeviceData, outputReceiver);
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine($"Successfully start app: {DeviceData.Serial} [{DeviceData.Product}");
         }
