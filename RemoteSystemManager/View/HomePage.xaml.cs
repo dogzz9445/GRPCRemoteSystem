@@ -37,10 +37,7 @@ namespace RemoteSystemManager.View
 
         private void ListViewProgramNames_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (sender != null)
-            {
-                ComputerViewModel.UpdateManagedPrograms((sender as ListView)?.SelectedItem as string);
-            }
+            ComputerViewModel.UpdateManagedPrograms((sender as ListView)?.SelectedItem as string);
         }
     }
 }
