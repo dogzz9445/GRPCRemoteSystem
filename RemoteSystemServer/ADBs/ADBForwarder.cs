@@ -30,6 +30,9 @@ namespace RemoteSystemServer
         private readonly IPEndPoint endPoint = new IPEndPoint(IPAddress.Loopback, AdbClient.AdbServerPort);
         private readonly LogShellOutputReceiver outputReceiver = new LogShellOutputReceiver();
 
+        private bool connectionSession = false;
+        private CancellationTokenSource tokenSource = new CancellationTokenSource();
+
         private DeviceData _deviceData;
 
         public DeviceData DeviceData { get => _deviceData; set => _deviceData = value; }
@@ -99,7 +102,6 @@ namespace RemoteSystemServer
 
             Forward();
             StartALVRClient();
-
         }
 
         public void StartALVRClient()
@@ -111,23 +113,33 @@ namespace RemoteSystemServer
                 return;
             }
 
-            while (true)
-            {
-                string command = Console.ReadLine();
-
-                client.ExecuteRemoteCommand(command, DeviceData, outputReceiver);
-
-                Thread.Sleep(100);
-            }
-
             //client.ExecuteRemoteCommand("am start -n alvr.client.quest/com.polygraphene.alvr.OvrActivity", DeviceData, outputReceiver);
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine($"Successfully start app: {DeviceData.Serial} [{DeviceData.Product}");
+
+            while (true)
+            {
+                Task.Delay(5000, tokenSource.Token);
+
+                if (tokenSource.IsCancellationRequested)
+                {
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine($"CancellationToken is requested");
+                    return;
+                }
+                //string command = Console.ReadLine();
+
+                //client.ExecuteRemoteCommand(command, DeviceData, outputReceiver);
+
+                client.ExecuteRemoteCommand("adb shell dumpsys activity activities | grep mResumedActivity", DeviceData, outputReceiver);
+
+            }
         }
 
 
         private void Monitor_DeviceDisconnected(object sender, DeviceDataEventArgs e)
         {
+            tokenSource.Cancel();
             Console.ForegroundColor = ConsoleColor.DarkRed;
             Console.WriteLine($"Disconnected device: {e.Device.Serial}");
         }
@@ -141,7 +153,7 @@ namespace RemoteSystemServer
                 return;
             }
 
-            client.ExecuteRemoteCommand("am stop -n alvr.client.quest/com.polygraphene.alvr.OvrActivity", DeviceData, outputReceiver);
+            client.ExecuteRemoteCommand("am force-stop alvr.client.quest", DeviceData, outputReceiver);
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine($"Successfully stop app: {DeviceData.Serial} [{DeviceData.Product}");
         }

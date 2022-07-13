@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Microsoft.Extensions.Logging;
+using Mini.Utils.Windows;
 using RemoteSystem.Remote;
 
 namespace RemoteSystemServer
@@ -47,6 +48,7 @@ namespace RemoteSystemServer
 
         public override Task<HeartBeat> GetHeartBeat(Empty request, ServerCallContext context)
         {
+            //_logger.Log(LogLevel.Information, $"GetHeartBeat");
             return Task.FromResult(new HeartBeat
             {
                 Timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
@@ -56,16 +58,10 @@ namespace RemoteSystemServer
 
         public override Task<MessageMacAddress> GetMacAddress(Empty request, ServerCallContext context)
         {
-            var macAddress = NetworkInterface.GetAllNetworkInterfaces()
-                .Where(nic =>
-                    nic.OperationalStatus == OperationalStatus.Up &&
-                    nic.NetworkInterfaceType != NetworkInterfaceType.Loopback)
-                .Select(nic => nic.GetPhysicalAddress().ToString()).FirstOrDefault();
-
-            return Task.FromResult(new MessageMacAddress
-            {
-                MacAddress = macAddress
-            });
+            var macAddresses = MacAddress.GetMacAddresses();
+            var response = new MessageMacAddress();
+            response.MacAddresses.AddRange(macAddresses);
+            return Task.FromResult(response);
         }
 
         public override Task<Performance> GetPerformance(Empty request, ServerCallContext context)

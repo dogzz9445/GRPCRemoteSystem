@@ -2,7 +2,7 @@
 using Windows.Networking.Connectivity;
 using Windows.Networking.NetworkOperators;
 
-namespace RemoteSystemServer
+namespace Mini.Utils.Windows
 {
     public class MobileHotSpot
     {

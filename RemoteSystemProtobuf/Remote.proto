@@ -17,7 +17,7 @@ service Remote
 
 message MessageMacAddress
 {
-	string macAddress = 1;
+	repeated string macAddresses = 1;
 }
 
 message MessageResult 
@@ -50,6 +50,11 @@ message ComputerControl
 		MOBILE_HOTSPOT_STOP = 4;
 	}
 	ComputerControlType control = 1;
+}
+
+message ComputerStatus
+{
+	
 }
 
 message ProgramControl
