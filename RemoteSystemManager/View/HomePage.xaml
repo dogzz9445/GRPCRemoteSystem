@@ -38,7 +38,7 @@
         <DataTemplate x:Key="ProgramNamesListDataTempalte">
             <materialDesign:Card>
                 <StackPanel>
-                    <TextBlock Style="{DynamicResource DarkStyle}" 
+                    <TextBlock Style="{StaticResource DarkStyle}" 
                                Text="{Binding }"/>
                 </StackPanel>
             </materialDesign:Card>

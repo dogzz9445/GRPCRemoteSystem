@@ -15,17 +15,18 @@ namespace RemoteSystemManager.Model
         private string _computerName;
         private string _programName;
         private string _programPath;
-        
+        private string _programStatus;
+
         [JsonIgnore]
-        public bool IsSelected 
-        { 
-            get => _isSelected; 
-            set => SetProperty(ref _isSelected, value); 
+        public bool IsSelected
+        {
+            get => _isSelected;
+            set => SetProperty(ref _isSelected, value);
         }
 
         [JsonProperty("ProgramName")]
         public string ProgramName
-        { 
+        {
             get => _programName;
             set => SetProperty(ref _programName, value);
         }
@@ -36,7 +37,7 @@ namespace RemoteSystemManager.Model
             get => _programPath;
             set => SetProperty(ref _programPath, value);
         }
-        
+
         [JsonIgnore]
         public string ProgramProcessName
         {
@@ -44,10 +45,17 @@ namespace RemoteSystemManager.Model
         }
 
         [JsonProperty("ComputerName")]
-        public string ComputerName 
+        public string ComputerName
         {
-            get => _computerName; 
+            get => _computerName;
             set => SetProperty(ref _computerName, value);
+        }
+
+        [JsonProperty("ProgramStatus")]
+        public string ProgramStatus
+        {
+            get => _programStatus;
+            set => SetProperty(ref _programStatus, value);
         }
     }
 }

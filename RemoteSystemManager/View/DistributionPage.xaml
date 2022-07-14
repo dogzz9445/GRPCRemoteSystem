@@ -9,6 +9,15 @@
       Title="DistributionPage">
 
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="64" />
+            <RowDefinition Height="1*" />
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0"
+                   Margin="16"
+                   FontWeight="SemiBold"
+                   Foreground="White"
+                   Style="{StaticResource MaterialDesignHeadline5TextBlock}"
+                   Text="컴퓨터 실행파일 배포" />
     </Grid>
 </Page>
