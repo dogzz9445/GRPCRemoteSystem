@@ -28,7 +28,8 @@ namespace RemoteSystemServer
         private readonly AdbClient client = new AdbClient();
         private readonly AdbServer server = new AdbServer();
         private readonly IPEndPoint endPoint = new IPEndPoint(IPAddress.Loopback, AdbClient.AdbServerPort);
-        private readonly LogShellOutputReceiver outputReceiver = new LogShellOutputReceiver();
+        private readonly LogShellOutputReceiver shellOutputReceiver = new LogShellOutputReceiver();
+        private readonly LogEventOutputReceiver eventOutputReceiver = new LogEventOutputReceiver();
 
         private bool connectionSession = false;
         private CancellationTokenSource tokenSource = new CancellationTokenSource();
