@@ -13,7 +13,7 @@ namespace Mini.Utils.Windows
 
             if (tethering.TetheringOperationalState == TetheringOperationalState.On)
             {
-                Console.WriteLine("Mobile hotspot is enabled");
+                Console.WriteLine("Mobile hotspot is already enabled");
                 return;
             }
             Console.WriteLine("Start mobile hotspot");
@@ -27,11 +27,29 @@ namespace Mini.Utils.Windows
 
             if (tethering.TetheringOperationalState == TetheringOperationalState.Off)
             {
-                Console.WriteLine("Mobile hotspot is disabled");
+                Console.WriteLine("Mobile hotspot is already disabled");
                 return;
             }
             Console.WriteLine("Stop mobile hotspot");
             await tethering.StopTetheringAsync();
+        }
+
+        public static TetheringOperationalState GetState()
+        {
+            var connectionprofile = NetworkInformation.GetInternetConnectionProfile();
+            var tethering = NetworkOperatorTetheringManager.CreateFromConnectionProfile(connectionprofile);
+
+            return tethering.TetheringOperationalState;
+        }
+
+        public static bool IsOn()
+        {
+            return GetState() == TetheringOperationalState.On;
+        }
+
+        public static bool IsOff()
+        {
+            return GetState() == TetheringOperationalState.On;
         }
     }
 }
