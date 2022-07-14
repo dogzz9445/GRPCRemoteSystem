@@ -28,7 +28,8 @@ namespace RemoteSystemServer
         private readonly AdbClient client = new AdbClient();
         private readonly AdbServer server = new AdbServer();
         private readonly IPEndPoint endPoint = new IPEndPoint(IPAddress.Loopback, AdbClient.AdbServerPort);
-        private readonly LogShellOutputReceiver outputReceiver = new LogShellOutputReceiver();
+        private readonly LogShellOutputReceiver shellOutputReceiver = new LogShellOutputReceiver();
+        private readonly LogEventOutputReceiver eventOutputReceiver = new LogEventOutputReceiver();
 
         private DeviceData _deviceData;
 
@@ -111,16 +112,16 @@ namespace RemoteSystemServer
                 return;
             }
 
-            while (true)
-            {
-                string command = Console.ReadLine();
+            //while (true)
+            //{
+            //    string command = Console.ReadLine();
 
-                client.ExecuteRemoteCommand(command, DeviceData, outputReceiver);
+            //    client.ExecuteRemoteCommand(command, DeviceData, outputReceiver);
 
-                Thread.Sleep(100);
-            }
+            //    Thread.Sleep(100);
+            //}
 
-            //client.ExecuteRemoteCommand("am start -n alvr.client.quest/com.polygraphene.alvr.OvrActivity", DeviceData, outputReceiver);
+            client.ExecuteRemoteCommand("am start -n alvr.client.quest/com.polygraphene.alvr.OvrActivity", DeviceData, shellOutputReceiver);
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine($"Successfully start app: {DeviceData.Serial} [{DeviceData.Product}");
         }
@@ -141,7 +142,7 @@ namespace RemoteSystemServer
                 return;
             }
 
-            client.ExecuteRemoteCommand("am stop -n alvr.client.quest/com.polygraphene.alvr.OvrActivity", DeviceData, outputReceiver);
+            client.ExecuteRemoteCommand("am stop -n alvr.client.quest/com.polygraphene.alvr.OvrActivity", DeviceData, shellOutputReceiver);
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine($"Successfully stop app: {DeviceData.Serial} [{DeviceData.Product}");
         }
