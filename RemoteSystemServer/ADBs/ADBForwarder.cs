@@ -104,10 +104,10 @@ namespace RemoteSystemServer
             await Task.Delay(1000);
 
             Forward();
-            await StartALVRClient();
+            await StartALVRClient(isLoop: true);
         }
 
-        public async Task StartALVRClient()
+        public async Task StartALVRClient(bool isLoop = false)
         {
             if (DeviceData == null)
             {
@@ -120,7 +120,10 @@ namespace RemoteSystemServer
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine($"Successfully start app: {DeviceData.Serial} [{DeviceData.Product}");
 
-            await CheckResumedActivity();
+            if (isLoop)
+            {
+                await CheckResumedActivity();
+            }
         }
 
         public async Task CheckResumedActivity()
@@ -146,7 +149,7 @@ namespace RemoteSystemServer
                 Console.WriteLine(log);
                 Console.WriteLine($"Stopped ALVR client: {DeviceData.Serial} [{DeviceData.Product}");
 
-                await StartALVRClient();
+                await StartALVRClient(isLoop: true);
             }
             else
             {
