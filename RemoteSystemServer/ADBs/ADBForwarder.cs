@@ -6,10 +6,11 @@ using System.Threading;
 using System.Reflection;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 
 using SharpAdbClient;
 using ICSharpCode.SharpZipLib.Zip;
-using System.Threading.Tasks;
 
 namespace RemoteSystemServer
 {
@@ -32,7 +33,8 @@ namespace RemoteSystemServer
         private readonly LogEventOutputReceiver eventOutputReceiver = new LogEventOutputReceiver();
 
         private bool connectionSession = false;
-        private CancellationTokenSource tokenSource;
+        private Dictionary<string, CancellationTokenSource> HashTokenSources;
+        private Dictionary<string, DeviceData> HashDeviceData;
 
         private DeviceData _deviceData;
 
@@ -41,6 +43,26 @@ namespace RemoteSystemServer
         public void Initialize()
         {
             Console.ResetColor();
+            if (HashTokenSources != null)
+            {
+                Console.WriteLine($"Cancel all task tokens {HashTokenSources.Count}");
+                foreach (var (key, tokenSource) in HashTokenSources)
+                {
+                    tokenSource.Cancel();
+                    tokenSource.Dispose();
+                }
+            }
+            if (HashDeviceData != null)
+            {
+                Console.WriteLine($"Dispose all device data {HashDeviceData.Count}");
+                foreach (var (key, deviceData) in HashDeviceData)
+                {
+
+                }
+            }
+            HashTokenSources = new Dictionary<string, CancellationTokenSource>();
+            HashDeviceData = new Dictionary<string, DeviceData>();
+
             var currentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             if (currentDirectory == null)
             {
@@ -96,7 +118,7 @@ namespace RemoteSystemServer
 
         private async void Monitor_DeviceConnected(object sender, DeviceDataEventArgs e)
         {
-            tokenSource = new CancellationTokenSource();
+            HashTokenSources[e.Device.Name] = new CancellationTokenSource();
             Console.ForegroundColor = ConsoleColor.DarkGreen;
             Console.WriteLine($"Connected device: {e.Device.Serial}");
             Connect(e.Device);
@@ -104,10 +126,10 @@ namespace RemoteSystemServer
             await Task.Delay(1000);
 
             Forward();
-            await StartALVRClient(isLoop: true);
+            await StartALVRClient(device: e, isLoop: true);
         }
 
-        public async Task StartALVRClient(bool isLoop = false)
+        public async Task StartALVRClient(DeviceDataEventArgs device, bool isLoop = false)
         {
             if (DeviceData == null)
             {
@@ -122,15 +144,15 @@ namespace RemoteSystemServer
 
             if (isLoop)
             {
-                await CheckResumedActivity();
+                await CheckResumedActivity(device);
             }
         }
 
-        public async Task CheckResumedActivity()
+        public async Task CheckResumedActivity(DeviceDataEventArgs e)
         {
             await Task.Delay(5000);
 
-            if (tokenSource.IsCancellationRequested)
+            if (HashTokenSources[e.Device.Name].IsCancellationRequested)
             {
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine($"CancellationToken is requested");
@@ -162,7 +184,7 @@ namespace RemoteSystemServer
 
         private void Monitor_DeviceDisconnected(object sender, DeviceDataEventArgs e)
         {
-            tokenSource.Cancel();
+            HashTokenSources[e.Device.Name].Cancel();
             Console.ForegroundColor = ConsoleColor.DarkRed;
             Console.WriteLine($"Disconnected device: {e.Device.Serial}");
         }
