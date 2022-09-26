@@ -125,6 +125,29 @@ namespace RemoteSystemServer
 
             await Task.Delay(1000);
 
+            // Windows
+            //@echo off
+            //echo Disconnecting old connections...
+            //adb disconnect
+            //echo Setting up connected device
+            //adb tcpip 5555
+            //echo Waiting for device to initialize
+            //timeout 3
+            //FOR / F "tokens=2" %% G IN('adb shell ip addr show wlan0 ^|find "inet "') DO set ipfull =%% G
+            //FOR / F "tokens=1 delims=/" %% G in ("%ipfull%") DO set ip =%% G
+            //echo Connecting to device with IP % ip % ...
+            //adb connect % ip %
+            //pause
+
+            // Linux / MacOS
+            //#!/bin/sh 
+            //adb disconnect
+            //adb tcpip 5555
+            //sleep 3
+            //IP =$(adb shell ip addr show wlan0 | grep 'inet ' | cut - d' ' - f6 | cut - d / -f1)
+            //                echo "${IP}"
+            //adb connect $IP
+
             Forward();
             await StartALVRClient(device: e, isLoop: true);
         }
@@ -158,6 +181,7 @@ namespace RemoteSystemServer
                 Console.WriteLine($"CancellationToken is requested");
                 return;
             }
+
 
             client.ExecuteRemoteCommand("dumpsys activity activities | grep mResumedActivity", DeviceData, eventOutputReceiver);
         }
