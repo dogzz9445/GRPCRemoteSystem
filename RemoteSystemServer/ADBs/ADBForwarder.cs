@@ -32,9 +32,12 @@ namespace RemoteSystemServer
         private readonly LogShellOutputReceiver shellOutputReceiver = new LogShellOutputReceiver();
         private readonly LogEventOutputReceiver eventOutputReceiver = new LogEventOutputReceiver();
 
-        private bool connectionSession = false;
-        private Dictionary<string, CancellationTokenSource> HashTokenSources;
-        private Dictionary<string, DeviceData> HashDeviceData;
+        //private bool connectionSession = false;
+        //private Dictionary<string, CancellationTokenSource> HashTokenSources;
+        //private Dictionary<string, DeviceData> HashDeviceData;
+
+        private CancellationTokenSource tokenSource;
+
 
         private DeviceData _deviceData;
 
@@ -43,25 +46,25 @@ namespace RemoteSystemServer
         public void Initialize()
         {
             Console.ResetColor();
-            if (HashTokenSources != null)
-            {
-                Console.WriteLine($"Cancel all task tokens {HashTokenSources.Count}");
-                foreach (var (key, tokenSource) in HashTokenSources)
-                {
-                    tokenSource.Cancel();
-                    tokenSource.Dispose();
-                }
-            }
-            if (HashDeviceData != null)
-            {
-                Console.WriteLine($"Dispose all device data {HashDeviceData.Count}");
-                foreach (var (key, deviceData) in HashDeviceData)
-                {
+            //if (HashTokenSources != null)
+            //{
+            //    Console.WriteLine($"Cancel all task tokens {HashTokenSources.Count}");
+            //    foreach (var (key, tokenSource) in HashTokenSources)
+            //    {
+            //        tokenSource.Cancel();
+            //        tokenSource.Dispose();
+            //    }
+            //}
+            //if (HashDeviceData != null)
+            //{
+            //    Console.WriteLine($"Dispose all device data {HashDeviceData.Count}");
+            //    foreach (var (key, deviceData) in HashDeviceData)
+            //    {
 
-                }
-            }
-            HashTokenSources = new Dictionary<string, CancellationTokenSource>();
-            HashDeviceData = new Dictionary<string, DeviceData>();
+            //    }
+            //}
+            //HashTokenSources = new Dictionary<string, CancellationTokenSource>();
+            //HashDeviceData = new Dictionary<string, DeviceData>();
 
             var currentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             if (currentDirectory == null)
@@ -118,41 +121,65 @@ namespace RemoteSystemServer
 
         private async void Monitor_DeviceConnected(object sender, DeviceDataEventArgs e)
         {
-            HashTokenSources[e.Device.Name] = new CancellationTokenSource();
+            tokenSource = new CancellationTokenSource();
             Console.ForegroundColor = ConsoleColor.DarkGreen;
             Console.WriteLine($"Connected device: {e.Device.Serial}");
             Connect(e.Device);
 
             await Task.Delay(1000);
 
-            // Windows
-            //@echo off
-            //echo Disconnecting old connections...
-            //adb disconnect
-            //echo Setting up connected device
-            //adb tcpip 5555
-            //echo Waiting for device to initialize
-            //timeout 3
-            //FOR / F "tokens=2" %% G IN('adb shell ip addr show wlan0 ^|find "inet "') DO set ipfull =%% G
-            //FOR / F "tokens=1 delims=/" %% G in ("%ipfull%") DO set ip =%% G
-            //echo Connecting to device with IP % ip % ...
-            //adb connect % ip %
-            //pause
-
-            // Linux / MacOS
-            //#!/bin/sh 
-            //adb disconnect
-            //adb tcpip 5555
-            //sleep 3
-            //IP =$(adb shell ip addr show wlan0 | grep 'inet ' | cut - d' ' - f6 | cut - d / -f1)
-            //                echo "${IP}"
-            //adb connect $IP
-
             Forward();
-            await StartALVRClient(device: e, isLoop: true);
+            await StartALVRClient(isLoop: true);
         }
 
-        public async Task StartALVRClient(DeviceDataEventArgs device, bool isLoop = false)
+        private async Task StartADBOverWifi()
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                Console.WriteLine("Platform: Linux");
+
+                // Linux / MacOS
+                //#!/bin/sh 
+                //adb disconnect
+                //adb tcpip 5555
+                //sleep 3
+                //IP =$(adb shell ip addr show wlan0 | grep 'inet ' | cut - d' ' - f6 | cut - d / -f1)
+                //                echo "${IP}"
+                //adb connect $IP
+
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                Console.WriteLine("Platform: Windows");
+
+                // Windows
+                Console.WriteLine("Disconnecting old connections...");
+                client.ExecuteRemoteCommand("disconnect", DeviceData, shellOutputReceiver);
+                
+                Console.WriteLine("Setting up connected device");
+                client.ExecuteRemoteCommand("tcpip 5555", DeviceData, shellOutputReceiver);
+
+                Console.WriteLine("Waiting for device to initialize");
+                await Task.Delay(3000);
+
+                string ip = "";
+                //FOR / F "tokens=2" %% G IN('adb shell ip addr show wlan0 ^|find "inet "') DO set ipfull =%% G
+                //FOR / F "tokens=1 delims=/" %% G in ("%ipfull%") DO set ip =%% G
+
+                //client.ExecuteRemoteCommand("", DeviceData, shellOutputReceiver);
+
+                Console.WriteLine($"Connecting to device with IP % {ip} % ...");
+                client.ExecuteRemoteCommand($"connect % {ip} %", DeviceData, shellOutputReceiver);
+            }
+            else
+            {
+                Console.WriteLine("Unsupported platform!");
+                return;
+            }
+
+        }
+
+        public async Task StartALVRClient(bool isLoop = false)
         {
             if (DeviceData == null)
             {
@@ -167,15 +194,15 @@ namespace RemoteSystemServer
 
             if (isLoop)
             {
-                await CheckResumedActivity(device);
+                await CheckResumedActivity();
             }
         }
 
-        public async Task CheckResumedActivity(DeviceDataEventArgs e)
+        public async Task CheckResumedActivity()
         {
             await Task.Delay(5000);
 
-            if (HashTokenSources[e.Device.Name].IsCancellationRequested)
+            if (tokenSource.IsCancellationRequested)
             {
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine($"CancellationToken is requested");
@@ -208,7 +235,7 @@ namespace RemoteSystemServer
 
         private void Monitor_DeviceDisconnected(object sender, DeviceDataEventArgs e)
         {
-            HashTokenSources[e.Device.Name].Cancel();
+            tokenSource.Cancel();
             Console.ForegroundColor = ConsoleColor.DarkRed;
             Console.WriteLine($"Disconnected device: {e.Device.Serial}");
         }
