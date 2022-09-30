@@ -31,6 +31,9 @@ namespace RemoteSystemServer
         private readonly IPEndPoint endPoint = new IPEndPoint(IPAddress.Loopback, AdbClient.AdbServerPort);
         private readonly LogShellOutputReceiver shellOutputReceiver = new LogShellOutputReceiver();
         private readonly LogEventOutputReceiver eventOutputReceiver = new LogEventOutputReceiver();
+        private readonly LogEventOutputReceiver adbConnectedOutputReceiver = new LogEventOutputReceiver();
+
+        private const int BASE_PORT = 5555;
 
         //private bool connectionSession = false;
         //private Dictionary<string, CancellationTokenSource> HashTokenSources;
@@ -74,6 +77,7 @@ namespace RemoteSystemServer
                 return;
             }
             eventOutputReceiver.OutputEvent += OnResumedActivityChecked;
+            adbConnectedOutputReceiver.OutputEvent += OnADBWifiConnected;
 
             var adbPath = "adb/platform-tools/{0}";
             var downloadUri = "https://dl.google.com/android/repository/platform-tools-latest-{0}.zip";
@@ -128,8 +132,9 @@ namespace RemoteSystemServer
 
             await Task.Delay(1000);
 
-            Forward();
-            await StartALVRClient(isLoop: true);
+            await StartADBOverWifi();
+            //Forward();
+            //await StartALVRClient(isLoop: true);
         }
 
         private async Task StartADBOverWifi()
@@ -177,6 +182,18 @@ namespace RemoteSystemServer
                 return;
             }
 
+        }
+
+        private async void OnADBWifiConnected(object sender, string outputLog)
+        {
+            Console.WriteLine(outputLog);
+            string ip = "";
+
+            Console.WriteLine($"Connecting to device with IP % {ip} % ...");
+            client.ExecuteRemoteCommand($"connect % {ip} %", DeviceData, adbConnectedOutputReceiver);
+
+            await Task.Delay(1000);
+            await StartALVRClient(isLoop: true);
         }
 
         public async Task StartALVRClient(bool isLoop = false)
