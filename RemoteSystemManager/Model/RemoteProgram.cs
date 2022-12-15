@@ -6,10 +6,11 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace RemoteSystemManager.Model
 {
-    public class Program : BindableBase
+    public class RemoteProgram : BindableBase
     {
         private bool _isSelected;
         private string _computerName;

@@ -30,7 +30,7 @@
 
         <!-- 데이터 템플릿 -->
         <DataTemplate x:Key="ProgramEditListDataTemplate"
-                      DataType="{x:Type model:Program}">
+                      DataType="{x:Type model:RemoteProgram}">
             <Border Style="{StaticResource MaterialDesignToolBarMainPanelBorderStyle}"
                     Background="#24888888">
                 <StackPanel VerticalAlignment="Center">
@@ -145,17 +145,19 @@
                           AutoGenerateColumns="False"
                           SelectionMode="Single"
                           CanUserAddRows="False"
+                          HorizontalContentAlignment="Left"
                           CanUserDeleteRows="False"
                           SelectedItem="{Binding Path=SelectedEditingComputer, Mode=TwoWay}"
                           HeadersVisibility="All">
                     <DataGrid.Columns>
                         <DataGridTextColumn Binding="{Binding ComputerName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                             Header="컴퓨터 이름"
+                                            Width="1*"
                                             ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}"
                                             EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
 
                         <DataGridTextColumn Header="컴퓨터 주소"
-                                            Width="*"
+                                            Width="1*"
                                             Binding="{Binding ComputerIp, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                             ElementStyle="{StaticResource MaterialDesignDataGridTextColumnStyle}"
                                             EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />

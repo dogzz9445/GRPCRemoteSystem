@@ -1,0 +1,19 @@
+﻿syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "Common.proto";
+
+package RemoteSystem.Remote;
+
+option csharp_namespace = "RemoteSystem.Proto";
+
+message VRControl {
+	enum VRControlType {
+		ALVR_CLIENT_START = 0;
+		ALVR_CLIENT_STOP = 1;
+		ALVR_SERVER_START = 2;
+		ALVR_SERVER_STOP = 3;
+	}
+	VRControlType control = 1;
+}

@@ -7,44 +7,20 @@ using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Microsoft.Extensions.Logging;
 using Mini.Utils.Windows;
-using RemoteSystem.Remote;
+using RemoteSystem.Proto;
 
-namespace RemoteSystemServer
+namespace RemoteSystemServer.Services
 {
     public class RemoteService : Remote.RemoteBase
     {
-        private static ADBForwarder _adbForwarder;
-        public static ADBForwarder AdbForwarder { get => _adbForwarder; set => _adbForwarder = value; }
-
+        public IServiceProvider Services;
         private readonly ILogger<RemoteService> _logger;
-        public RemoteService(ILogger<RemoteService> logger)
+
+        public RemoteService(IServiceProvider services, ILogger<RemoteService> logger)
         {
+            Services = services;
             _logger = logger;
-
-            //_logger.Log(LogLevel.Information, "Start RemoteService");
-
-            if (AdbForwarder == null)
-            {
-                AdbForwarder = new ADBForwarder();
-                AdbForwarder.Initialize();
-            }
-            MobileHotSpot.Start();
-
-            //MobileHotSpot.Start();
         }
-
-
-        //public RemoteService(ILoggerFactory logger)
-        //{
-        //    _logger = logger.CreateLogger<RemoteService>();
-
-        //    _logger.Log(LogLevel.Information, "Start RemoteService");
-
-        //    _adbForwarder = new ADBForwarder();
-        //    _adbForwarder.Initialize();
-
-        //    MobileHotSpot.Start();
-        //}
 
         public override Task<HeartBeat> GetHeartBeat(Empty request, ServerCallContext context)
         {
@@ -74,7 +50,7 @@ namespace RemoteSystemServer
             });
         }
 
-        public override Task<Empty> PostComputerControlMessage(ComputerControl request, ServerCallContext context)
+        public override async Task<MessageResult> PostComputerControlMessage(ComputerControl request, ServerCallContext context)
         {
             switch (request.Control)
             {
@@ -88,16 +64,16 @@ namespace RemoteSystemServer
                     Process.Start("shutdown.exe", "-s -f");
                     break;
                 case ComputerControl.Types.ComputerControlType.MobileHotspotStart:
-                    MobileHotSpot.Start();
+                    await MobileHotSpot.StartAsync();
                     break;
                 case ComputerControl.Types.ComputerControlType.MobileHotspotStop:
-                    MobileHotSpot.Stop();
+                    await MobileHotSpot.StopAsync();
                     break;
                 default:
                     break;
             }
 
-            return Task.FromResult(new Empty());
+            return await Task.FromResult(new MessageResult() { Result = MessageResult.Types.MessageResultType.Success });
         }
 
         public override Task<MessageResult> PostProgramControlMessage(ProgramControl request, ServerCallContext context)
@@ -130,18 +106,11 @@ namespace RemoteSystemServer
             switch (request.Control)
             {
                 case VRControl.Types.VRControlType.AlvrClientStart:
-                    if (_adbForwarder == null)
-                    {
-                        _adbForwarder = new ADBForwarder();
-                        _adbForwarder.Initialize();
-                    }
-                    _adbForwarder.StartALVRClient();
+                    _logger.LogInformation("Running ALVRClient");
+                    var a = Services.GetService(typeof(MonitoringService));
                     break;
                 case VRControl.Types.VRControlType.AlvrClientStop:
-                    if (_adbForwarder != null)
-                    {
-                        _adbForwarder.ForceStopALVRClient();
-                    }
+                    _logger.LogInformation("Stopping ALVRClient");
                     break;
                 default:
                     break;
@@ -153,5 +122,6 @@ namespace RemoteSystemServer
                 ResultMessage = "Success"
             });
         }
+
     }
 }

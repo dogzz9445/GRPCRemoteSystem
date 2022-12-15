@@ -16,7 +16,7 @@ using System.Windows.Shapes;
 using System.Windows.Shell;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Net.Client;
-using RemoteSystem.Remote;
+using RemoteSystem.Proto;
 using RemoteSystemManager.ViewModel;
 
 namespace RemoteSystemManager

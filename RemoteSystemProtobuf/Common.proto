@@ -1,0 +1,20 @@
+﻿syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+package RemoteSystem.Remote;
+
+option csharp_namespace = "RemoteSystem.Proto";
+
+message MessageResult 
+{
+	enum MessageResultType {
+		NONE = 0;
+		SUCCESS = 1;
+		ERROR = 2;
+	}
+	MessageResultType result = 1;
+	string resultMessage = 2;
+	string errorMessage = 3;
+}

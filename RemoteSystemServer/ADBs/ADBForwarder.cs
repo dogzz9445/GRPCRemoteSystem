@@ -33,7 +33,7 @@ namespace RemoteSystemServer
         private readonly LogEventOutputReceiver eventOutputReceiver = new LogEventOutputReceiver();
         private readonly LogEventOutputReceiver adbConnectedOutputReceiver = new LogEventOutputReceiver();
 
-        private const int BASE_PORT = 5555;
+        private const int BASE_PORT = 9521;
 
         //private bool connectionSession = false;
         //private Dictionary<string, CancellationTokenSource> HashTokenSources;
@@ -119,7 +119,7 @@ namespace RemoteSystemServer
 
             var monitor = new DeviceMonitor(new AdbSocket(endPoint));
             monitor.DeviceConnected += Monitor_DeviceConnected;
-            monitor.DeviceDisconnected += Monitor_DeviceDisconnected;
+            //monitor.DeviceDisconnected += Monitor_DeviceDisconnected;
             monitor.Start();
         }
 
@@ -132,7 +132,7 @@ namespace RemoteSystemServer
 
             await Task.Delay(1000);
 
-            await StartADBOverWifi();
+            //await StartADBOverWifi();
             //Forward();
             //await StartALVRClient(isLoop: true);
         }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Windows.Networking.Connectivity;
 using Windows.Networking.NetworkOperators;
 
@@ -6,12 +7,34 @@ namespace Mini.Utils.Windows
 {
     public class MobileHotSpot
     {
-        public static async void Start()
+        private static NetworkOperatorTetheringManager _manager;
+        public static NetworkOperatorTetheringManager Manager
+        {
+            get
+            {
+                if (_manager != null)
+                {
+                    return _manager;
+                }
+                var connectionprofile = NetworkInformation.GetInternetConnectionProfile();
+                _manager = NetworkOperatorTetheringManager.CreateFromConnectionProfile(connectionprofile);
+                return _manager;
+            }
+        }
+
+        public static NetworkOperatorTetheringManager CreateManager()
+        {
+            var connectionprofile = NetworkInformation.GetInternetConnectionProfile();
+            var tethering = NetworkOperatorTetheringManager.CreateFromConnectionProfile(connectionprofile);
+            return tethering;
+        }
+
+        public static async Task StartAsync()
         {
             var connectionprofile = NetworkInformation.GetInternetConnectionProfile();
             var tethering = NetworkOperatorTetheringManager.CreateFromConnectionProfile(connectionprofile);
 
-            if (tethering.TetheringOperationalState == TetheringOperationalState.On)
+            if (Manager.TetheringOperationalState == TetheringOperationalState.On)
             {
                 Console.WriteLine("Mobile hotspot is already enabled");
                 return;
@@ -20,7 +43,7 @@ namespace Mini.Utils.Windows
             await tethering.StartTetheringAsync();
         }
 
-        public static async void Stop()
+        public static async Task StopAsync()
         {
             var connectionprofile = NetworkInformation.GetInternetConnectionProfile();
             var tethering = NetworkOperatorTetheringManager.CreateFromConnectionProfile(connectionprofile);
@@ -40,6 +63,14 @@ namespace Mini.Utils.Windows
             var tethering = NetworkOperatorTetheringManager.CreateFromConnectionProfile(connectionprofile);
 
             return tethering.TetheringOperationalState;
+        }
+
+        public static uint GetClientCount()
+        {
+            var connectionprofile = NetworkInformation.GetInternetConnectionProfile();
+            var tethering = NetworkOperatorTetheringManager.CreateFromConnectionProfile(connectionprofile);
+
+            return tethering.ClientCount;
         }
 
         public static bool IsOn()

@@ -14,7 +14,7 @@ using System.Timers;
 using System.Windows.Forms;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
-using RemoteSystem.Remote;
+using RemoteSystem.Proto;
 using Application = System.Windows.Application;
 using Timer = System.Timers.Timer;
 using Grpc.Net.Client;
@@ -45,13 +45,13 @@ namespace RemoteSystemManager.ViewModel
 
         private ComputerViewModel()
         {
-            Computers = new ItemObservableCollection<Computer>();
-            ListManagedPrograms = new ItemObservableCollection<Program>();
+            Computers = new ItemObservableCollection<RemoteComputer>();
+            ListManagedPrograms = new ItemObservableCollection<RemoteProgram>();
             ListManagedProgramNames = new ObservableCollection<string>();
 
             Computers.ItemPropertyChanged += (s, e) =>
             {
-                if (e.PropertyName == nameof(Computer.ComputerIp))
+                if (e.PropertyName == nameof(RemoteComputer.ComputerIp))
                 {
                     Console.WriteLine(e.PropertyName);
                 }
@@ -69,15 +69,15 @@ namespace RemoteSystemManager.ViewModel
         private const string ComputersConfigFileName = "data/computers.json";
         private const int GRPC_SERVER_PORT = 9621;
 
-        private ItemObservableCollection<Computer> _computers;
-        private ItemObservableCollection<Program> _listManagedPrograms;
+        private ItemObservableCollection<RemoteComputer> _computers;
+        private ItemObservableCollection<RemoteProgram> _listManagedPrograms;
         private ObservableCollection<string> _listManagedProgramNames;
-        private Computer _selectedViewComputer;
+        private RemoteComputer _selectedViewComputer;
         private string _selectedViewProgramName;
-        private Program _selectedViewProgram;
-        private Program _selectedControlProgram;
-        private Computer _selectedEditingComputer;
-        private Program _selectedEditingProgram;
+        private RemoteProgram _selectedViewProgram;
+        private RemoteProgram _selectedControlProgram;
+        private RemoteComputer _selectedEditingComputer;
+        private RemoteProgram _selectedEditingProgram;
 
         public bool IsMacAddressCheck
         {
@@ -99,13 +99,13 @@ namespace RemoteSystemManager.ViewModel
 
         #region Public 변수 정의
 
-        public ItemObservableCollection<Computer> Computers
+        public ItemObservableCollection<RemoteComputer> Computers
         {
             get => _computers;
             set => SetCollectionProperty(ref _computers, value);
         }
 
-        public ItemObservableCollection<Program> ListManagedPrograms
+        public ItemObservableCollection<RemoteProgram> ListManagedPrograms
         {
             get => _listManagedPrograms;
             set => SetCollectionProperty(ref _listManagedPrograms, value);
@@ -117,13 +117,13 @@ namespace RemoteSystemManager.ViewModel
             set => SetProperty(ref _listManagedProgramNames, value);
         }
 
-        public Computer SelectedViewComputer
+        public RemoteComputer SelectedViewComputer
         {
             get => _selectedViewComputer;
             set => SetProperty(ref _selectedViewComputer, value);
         }
 
-        public Program SelectedViewProgram
+        public RemoteProgram SelectedViewProgram
         {
             get => _selectedViewProgram;
             set => SetProperty(ref _selectedViewProgram, value);
@@ -135,19 +135,19 @@ namespace RemoteSystemManager.ViewModel
             set => SetProperty(ref _selectedViewProgramName, value);
         }
 
-        public Program SelectedControlProgram
+        public RemoteProgram SelectedControlProgram
         {
             get => _selectedControlProgram;
             set => SetProperty(ref _selectedControlProgram, value);
         }
 
-        public Computer SelectedEditingComputer
+        public RemoteComputer SelectedEditingComputer
         {
             get => _selectedEditingComputer;
             set => SetProperty(ref _selectedEditingComputer, value);
         }
 
-        public Program SelectedEditingProgram
+        public RemoteProgram SelectedEditingProgram
         {
             get => _selectedEditingProgram;
             set => SetProperty(ref _selectedEditingProgram, value);
@@ -189,7 +189,7 @@ namespace RemoteSystemManager.ViewModel
             }
         }
 
-        public void SelectAll(bool select, IEnumerable<Computer> computers)
+        public void SelectAll(bool select, IEnumerable<RemoteComputer> computers)
         {
             foreach (var model in computers)
             {
@@ -197,7 +197,7 @@ namespace RemoteSystemManager.ViewModel
             }
         }
 
-        public void SelectAll(bool select, IEnumerable<Program> programs)
+        public void SelectAll(bool select, IEnumerable<RemoteProgram> programs)
         {
             foreach (var model in programs)
             {
@@ -205,7 +205,7 @@ namespace RemoteSystemManager.ViewModel
             }
         }
 
-        public IEnumerable<Program> GetAllPrograms()
+        public IEnumerable<RemoteProgram> GetAllPrograms()
         {
             if (Computers != null)
             {
@@ -240,8 +240,8 @@ namespace RemoteSystemManager.ViewModel
         private DelegateCommand _killAllProgramsCommand;
         private DelegateCommand _runAllSelectedProgramsCommand;
         private DelegateCommand _killAllSelectedProgramsCommand;
-        private DelegateCommand<Program> _runSingleProgramCommand;
-        private DelegateCommand<Program> _killSingleProgramCommand;
+        private DelegateCommand<RemoteProgram> _runSingleProgramCommand;
+        private DelegateCommand<RemoteProgram> _killSingleProgramCommand;
         private DelegateCommand _runMultipleProgramsCommand;
         private DelegateCommand _killMultipleProgramsCommand;
 
@@ -327,8 +327,8 @@ namespace RemoteSystemManager.ViewModel
                     }
                 });
 
-        public DelegateCommand<Program> RunSingleProgramCommand =>
-            _runSingleProgramCommand ??= new DelegateCommand<Program>(
+        public DelegateCommand<RemoteProgram> RunSingleProgramCommand =>
+            _runSingleProgramCommand ??= new DelegateCommand<RemoteProgram>(
                 (program) =>
                 {
                     foreach (var computer in Computers)
@@ -340,8 +340,8 @@ namespace RemoteSystemManager.ViewModel
                     }
                 });
 
-        public DelegateCommand<Program> KillSingleProgramCommand =>
-            _killSingleProgramCommand ??= new DelegateCommand<Program>(
+        public DelegateCommand<RemoteProgram> KillSingleProgramCommand =>
+            _killSingleProgramCommand ??= new DelegateCommand<RemoteProgram>(
                 (program) =>
                 {
                     foreach (var computer in Computers)
@@ -539,7 +539,7 @@ namespace RemoteSystemManager.ViewModel
 
         public DelegateCommand AddComputerCommand =>
             _addComputerCommand ??= new DelegateCommand(
-                () => { Computers.Add(new Computer()); });
+                () => { Computers.Add(new RemoteComputer()); });
 
         public DelegateCommand RemoveComputerCommand =>
             _removeComputerCommand ??= new DelegateCommand(
@@ -557,7 +557,7 @@ namespace RemoteSystemManager.ViewModel
                 {
                     if (SelectedEditingComputer != null)
                     {
-                        SelectedEditingComputer.AddProgram(new Program());
+                        SelectedEditingComputer.AddProgram(new RemoteProgram());
                     }
                 });
 
@@ -635,7 +635,7 @@ namespace RemoteSystemManager.ViewModel
                 IsAllSelectedPrograms = false;
 
                 // 필터링
-                List<Program> filteredPrograms = new List<Program>();
+                List<RemoteProgram> filteredPrograms = new List<RemoteProgram>();
                 if (filterProgramName == "전체")
                 {
                     filteredPrograms = GetAllPrograms().ToList();
@@ -669,7 +669,7 @@ namespace RemoteSystemManager.ViewModel
         {
             if (File.Exists(fileName))
             {
-                var computers = await JsonManager.ReadJsonFile<List<Computer>>(fileName);
+                var computers = await JsonManager.ReadJsonFile<List<RemoteComputer>>(fileName);
                 await callOnUiThread(() =>
                 {
                     Computers.Clear();
@@ -715,7 +715,7 @@ namespace RemoteSystemManager.ViewModel
         }
         #endregion
 
-        private async void SendProgramControl(Computer computer, Program program, ProgramControl.Types.ProgramControlType type)
+        private async void SendProgramControl(RemoteComputer computer, RemoteProgram program, ProgramControl.Types.ProgramControlType type)
         {
             try
             {
@@ -737,7 +737,7 @@ namespace RemoteSystemManager.ViewModel
             }
         }
 
-        private async void SendComputerControl(Computer computer, ComputerControl.Types.ComputerControlType type)
+        private async void SendComputerControl(RemoteComputer computer, ComputerControl.Types.ComputerControlType type)
         {
             try
             {
@@ -756,7 +756,7 @@ namespace RemoteSystemManager.ViewModel
             }
         }
 
-        private async void SendVRControl(Computer computer, VRControl.Types.VRControlType type)
+        private async void SendVRControl(RemoteComputer computer, VRControl.Types.VRControlType type)
         {
             try
             {

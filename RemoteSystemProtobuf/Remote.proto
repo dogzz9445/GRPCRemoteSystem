@@ -3,14 +3,19 @@
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
 
-option csharp_namespace = "RemoteSystem.Remote";
+import "Common.proto";
+import "VRRemote.proto";
+
+package RemoteSystem.Remote;
+
+option csharp_namespace = "RemoteSystem.Proto";
 
 service Remote
 {
-  rpc GetMacAddress (google.protobuf.Empty) returns (MessageMacAddress);
+    rpc GetMacAddress (google.protobuf.Empty) returns (MessageMacAddress);
 	rpc GetHeartBeat (google.protobuf.Empty) returns (HeartBeat);
 	rpc GetPerformance (google.protobuf.Empty) returns (Performance);
-	rpc PostComputerControlMessage (ComputerControl) returns (google.protobuf.Empty);
+	rpc PostComputerControlMessage (ComputerControl) returns (MessageResult);
 	rpc PostProgramControlMessage (ProgramControl) returns (MessageResult);
 	rpc PostVRControlMessage (VRControl) returns (MessageResult);
 }
@@ -18,26 +23,6 @@ service Remote
 message MessageMacAddress
 {
 	repeated string macAddresses = 1;
-}
-
-message MessageResult 
-{
-	enum MessageResultType {
-		SUCCESS = 0;
-		ERROR = 1;
-	}
-	MessageResultType result = 1;
-	string resultMessage = 2;
-}
-
-message VRControl {
-	enum VRControlType {
-		ALVR_CLIENT_START = 0;
-		ALVR_CLIENT_STOP = 1;
-		ALVR_SERVER_START = 2;
-		ALVR_SERVER_STOP = 3;
-	}
-	VRControlType control = 1;
 }
 
 message ComputerControl
@@ -48,13 +33,13 @@ message ComputerControl
 		COMPUTER_STOP = 2;
 		MOBILE_HOTSPOT_START = 3;
 		MOBILE_HOTSPOT_STOP = 4;
+		CHECK_MOBILE_HOTSPOT_STATUS = 5;
 	}
 	ComputerControlType control = 1;
 }
 
 message ComputerStatus
 {
-	
 }
 
 message ProgramControl
@@ -62,6 +47,7 @@ message ProgramControl
 	enum ProgramControlType {
 		START = 0;
 		STOP = 1;
+		CHECK = 2;
 	}
 	string name = 1;
 	string fileName = 2;

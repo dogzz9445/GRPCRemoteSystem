@@ -45,7 +45,7 @@
         </DataTemplate>
         
         <DataTemplate x:Key="ProgramViewListDataTemplate"
-                      DataType="{x:Type model:Program}">
+                      DataType="{x:Type model:RemoteProgram}">
             <Border Style="{StaticResource MaterialDesignToolBarMainPanelBorderStyle}"
                     Background="#24888888">
                 <StackPanel VerticalAlignment="Center">

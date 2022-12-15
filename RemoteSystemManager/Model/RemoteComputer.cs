@@ -1,21 +1,21 @@
 ﻿using Newtonsoft.Json;
-using RemoteSystemManager.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using RemoteSystemManager.Common;
 
 namespace RemoteSystemManager.Model
 {
-    public class Computer : BindableBase
+    public class RemoteComputer : BindableBase
     {
         private bool _isSelected;
         private string _computerName;
         private string _computerIp;
         private string _computerMacAddress;
         private string _computerStatus;
-        private ItemObservableCollection<Program> _programs;
+        private ItemObservableCollection<RemoteProgram> _programs;
 
         [JsonIgnore]
         public bool IsSelected 
@@ -46,7 +46,7 @@ namespace RemoteSystemManager.Model
         }
 
         [JsonProperty("Programs")]
-        public ItemObservableCollection<Program> Programs
+        public ItemObservableCollection<RemoteProgram> Programs
         {
             get => _programs;
             set => _programs = value;
@@ -66,12 +66,12 @@ namespace RemoteSystemManager.Model
             set => SetProperty(ref _computerStatus, value);
         }
 
-        public Computer()
+        public RemoteComputer()
         {
-            _programs = new ItemObservableCollection<Program>();
+            _programs = new ItemObservableCollection<RemoteProgram>();
         }
 
-        public void AddProgram(Program program)
+        public void AddProgram(RemoteProgram program)
         {
             program.ComputerName = ComputerName;
             _programs.Add(program);
